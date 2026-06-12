@@ -1,0 +1,44 @@
+# ============================================================
+# CloudWise AI - Local Development Docker Compose
+# Spins up PostgreSQL + Backend for local testing.
+# Frontend run separately via `npm run dev` (Vite).
+# ============================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloudwise-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cloudwise
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: cloudwise-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/cloudwise
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+volumes:
+  postgres_data:

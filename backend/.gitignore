@@ -1,0 +1,48 @@
+# ============================================================
+# CloudWise AI - Backend .gitignore
+# ============================================================
+
+# --- Environment / Secrets (Security Policy) ---
+.env
+.env.local
+.env.production
+.env.*.local
+secrets.json
+credentials.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Alembic ---
+# (keep versions/ tracked, but ignore local sqlite test DBs)
+*.sqlite3
+*.db
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Prophet/cmdstanpy artifacts ---
+cmdstan/
+*.csv.bak
