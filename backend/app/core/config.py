@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------
     # Database
     # ------------------------------------------------------------
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/cloudwise"
+    DATABASE_URL: str = "sqlite:///./cloudwise.db"
 
     # ------------------------------------------------------------
     # JWT Authentication

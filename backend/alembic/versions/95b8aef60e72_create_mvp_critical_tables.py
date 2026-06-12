@@ -10,6 +10,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+from app.db.types import JSONB_COMPAT
 
 # revision identifiers, used by Alembic.
 revision: str = '95b8aef60e72'
@@ -114,8 +115,8 @@ def upgrade() -> None:
     sa.Column('region', sa.String(length=100), nullable=False),
     sa.Column('arn', sa.String(), nullable=True),
     sa.Column('status', sa.Enum('RUNNING', 'STOPPED', 'AVAILABLE', 'IN_USE', 'TERMINATED', 'UNKNOWN', name='resource_status_enum'), nullable=False),
-    sa.Column('tags', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-    sa.Column('metadata_json', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('tags', JSONB_COMPAT(), nullable=True),
+    sa.Column('metadata_json', JSONB_COMPAT(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['cloud_account_id'], ['cloud_accounts.id'], ),
