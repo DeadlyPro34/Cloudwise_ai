@@ -45,9 +45,11 @@ cloudwise-ai/
 - An AWS account with read-only IAM credentials (for AWS features)
 - An Anthropic API key (for Copilot)
 
-### 1. Backend Setup
+---
 
-The backend comes pre-configured to use **SQLite** locally (`sqlite:///./cloudwise.db`), so you don't need to install PostgreSQL to test it on your machine!
+### 1. Backend
+
+#### First-Time Setup (one-time, ~5-10 min due to ML library downloads)
 
 ```bash
 cd backend
@@ -55,28 +57,49 @@ cp .env.example .env          # fill in ANTHROPIC_API_KEY for Claude integration
 
 python -m venv venv
 # Activate the virtual environment
-source venv/bin/activate       # MacOS/Linux
+source venv/bin/activate       # macOS/Linux
 # OR
 venv\Scripts\activate          # Windows
 
-pip install -r requirements.txt
+pip install -r requirements.txt   # ⏳ Downloads ~48MB of ML libs (one time only)
 
-# Run database migrations (automatically creates SQLite db locally)
+# Run database migrations (creates SQLite db locally)
 alembic upgrade head
+```
 
-# Start the server
+#### Every Subsequent Run (fast, no downloads — starts in seconds)
+
+```bash
+cd backend
+source venv/bin/activate       # macOS/Linux
+# OR
+venv\Scripts\activate          # Windows
+
 uvicorn app.main:app --reload --port 8000
 ```
 
+> **💡 Tip:** You do NOT need to re-run `pip install` or `alembic upgrade head`
+> unless `requirements.txt` or a migration file has changed. The virtual
+> environment persists in `backend/venv/` between restarts.
+
 API docs available at `http://localhost:8000/docs`
 
-### 2. Frontend Setup
+---
+
+### 2. Frontend
+
+#### First-Time Setup
 
 ```bash
 cd frontend
 cp .env.example .env           # set VITE_API_URL=http://localhost:8000/api/v1
-
 npm install
+```
+
+#### Every Subsequent Run
+
+```bash
+cd frontend
 npm run dev
 ```
 
