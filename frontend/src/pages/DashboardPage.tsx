@@ -227,7 +227,7 @@ export function DashboardPage() {
                   color: "#F9FAFB",
                 }}
                 labelStyle={{ color: "#9CA3AF" }}
-                formatter={(value: number) => [formatCurrency(value), "Cost"]}
+                formatter={(value) => [formatCurrency(Number(value)), "Cost"]}
               />
               <Area
                 type="monotone"
