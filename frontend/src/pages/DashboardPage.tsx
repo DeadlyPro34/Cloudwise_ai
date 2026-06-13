@@ -52,12 +52,8 @@ export function DashboardPage() {
     queryFn: getRecommendations,
   });
 
-  // Empty state — no AWS account connected (either error or all zeros)
-  const noAccountConnected =
-    dashError ||
-    (!dashLoading && dashboard?.resource_count === 0 && dashboard?.total_spend === 0);
-
-  if (noAccountConnected) {
+  // Empty state — no AWS account connected
+  if (dashError) {
     return (
       <div className="animate-[fadeIn_0.5s_ease]">
         <h2 className="mb-1">Dashboard</h2>
@@ -227,7 +223,7 @@ export function DashboardPage() {
                   color: "#F9FAFB",
                 }}
                 labelStyle={{ color: "#9CA3AF" }}
-                formatter={(value) => [formatCurrency(Number(value)), "Cost"]}
+                formatter={(value: number) => [formatCurrency(value), "Cost"]}
               />
               <Area
                 type="monotone"
