@@ -54,9 +54,9 @@ export function SettingsPage() {
           </div>
           <div className="space-y-4 max-w-lg">
             <div>
-              <label className="block text-sm text-(--color-text-secondary) mb-1">Anthropic API Key (for Copilot)</label>
+              <label className="block text-sm text-(--color-text-secondary) mb-1">Groq API Key (for Copilot)</label>
               <div className="flex gap-2">
-                <input type="password" value="sk-ant-api03-..." readOnly className="input-field flex-1 opacity-50" />
+                <input type="password" value="gsk_..." readOnly className="input-field flex-1 opacity-50" />
                 <Button variant="secondary">Update</Button>
               </div>
             </div>
