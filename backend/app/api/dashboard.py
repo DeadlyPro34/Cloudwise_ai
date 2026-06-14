@@ -9,9 +9,10 @@ empty-state behaviour.
 from datetime import date, timedelta
 import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func, case
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from app.db.session import get_db
 from app.core.deps import get_current_user
@@ -332,3 +333,50 @@ def get_recommendations(
         logger.info("cache_set", extra={"key": cache_key, "org_id": str(org.id)})
 
     return result
+
+
+class RecommendationStatusUpdate(BaseModel):
+    status: RecommendationStatus
+
+@router.patch('/recommendations/{recommendation_id}/status')
+def update_recommendation_status(
+    recommendation_id: uuid.UUID,
+    payload: RecommendationStatusUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    import logging
+    logger = logging.getLogger(__name__)
+
+    org = get_user_organization(db, current_user.id)
+    if not org:
+        raise HTTPException(status_code=403, detail='No organization found')
+
+    account_ids = _get_account_ids(db, current_user)
+    if not account_ids:
+        raise HTTPException(status_code=403, detail='No cloud accounts found')
+
+    res_ids_sq = _account_resource_ids_subquery(account_ids)
+
+    rec = db.execute(
+        select(Recommendation)
+        .where(
+            Recommendation.id == recommendation_id,
+            Recommendation.resource_id.in_(res_ids_sq)
+        )
+    ).scalar_one_or_none()
+
+    if not rec:
+        raise HTTPException(status_code=404, detail='Recommendation not found')
+
+    rec.status = payload.status
+    db.commit()
+    db.refresh(rec)
+
+    # Invalidate caches
+    if cache_manager:
+        cache_manager.delete(f'org:{org.id}:recommendations')
+        cache_manager.delete(f'org:{org.id}:dashboard')
+        logger.info('cache_invalidated', extra={'org_id': str(org.id), 'keys': ['recommendations', 'dashboard']})
+
+    return {'status': 'success', 'recommendation_id': str(rec.id), 'new_status': rec.status.value}
