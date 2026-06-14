@@ -4,6 +4,7 @@ Loads settings from environment variables (.env file).
 """
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 from typing import List
 
 
@@ -19,7 +20,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------
     # Database
     # ------------------------------------------------------------
-    DATABASE_URL: str = "sqlite:///./cloudwise.db"
+    DATABASE_URL: str = Field(default="sqlite:///./cloudwise.db", env="DATABASE_URL")
 
     # ------------------------------------------------------------
     # JWT Authentication
@@ -50,7 +51,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------
     # AI / Groq API (Llama)
     # ------------------------------------------------------------
-    GROQ_API_KEY: str | None = None
+    GROQ_API_KEY: str = Field(..., env="GROQ_API_KEY")
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
     # ------------------------------------------------------------
