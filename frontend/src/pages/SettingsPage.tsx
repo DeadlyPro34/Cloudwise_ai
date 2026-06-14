@@ -11,6 +11,7 @@ export function SettingsPage() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null);
   
   // AWS Connection State
@@ -63,6 +64,21 @@ export function SettingsPage() {
     }
   };
 
+  const handleDisconnect = async () => {
+    setDisconnecting(true);
+    setFeedback(null);
+    try {
+      await apiClient.delete("/aws/disconnect");
+      setAwsConnected(false);
+      setAwsAccountId(null);
+      setFeedback({ type: "success", msg: "AWS account disconnected successfully." });
+    } catch (err) {
+      setFeedback({ type: "error", msg: getApiErrorMessage(err) || "Failed to disconnect AWS account." });
+    } finally {
+      setDisconnecting(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-6">
@@ -108,7 +124,9 @@ export function SettingsPage() {
               </div>
             </div>
             {awsConnected && (
-              <Button variant="secondary" className="w-full">Disconnect AWS Account</Button>
+              <Button variant="secondary" className="w-full" onClick={handleDisconnect} disabled={disconnecting}>
+                {disconnecting ? "Disconnecting..." : "Disconnect AWS Account"}
+              </Button>
             )}
           </div>
         </div>

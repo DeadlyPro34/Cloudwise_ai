@@ -29,6 +29,7 @@ from app.services.auth_service import get_user_organization
 from app.services import aws_service
 from app.services import recommendation_service
 from app.services import health_score_service
+from app.core.encryption import encrypt, decrypt
 
 router = APIRouter(prefix="/aws", tags=["AWS"])
 
@@ -176,8 +177,8 @@ def connect_aws(
     if existing:
         existing.status = CloudAccountStatus.CONNECTED
         existing.account_name = account_name
-        existing.aws_access_key_enc = payload.aws_access_key_id
-        existing.aws_secret_key_enc = payload.aws_secret_access_key
+        existing.aws_access_key_enc = encrypt(payload.aws_access_key_id)
+        existing.aws_secret_key_enc = encrypt(payload.aws_secret_access_key)
         existing.region = payload.region
         existing.updated_at = datetime.now(timezone.utc)
         account = existing
@@ -188,8 +189,8 @@ def connect_aws(
             account_id=aws_account_id,
             account_name=account_name,
             status=CloudAccountStatus.CONNECTED,
-            aws_access_key_enc=payload.aws_access_key_id,
-            aws_secret_key_enc=payload.aws_secret_access_key,
+            aws_access_key_enc=encrypt(payload.aws_access_key_id),
+            aws_secret_key_enc=encrypt(payload.aws_secret_access_key),
             region=payload.region,
         )
         db.add(account)
@@ -202,6 +203,29 @@ def connect_aws(
         "account_name": account.account_name,
         "status": account.status.value,
     }
+
+
+# ------------------------------------------------------------------
+# DELETE /aws/disconnect  (Item 2)
+# ------------------------------------------------------------------
+
+@router.delete("/disconnect")
+def disconnect_aws(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Disconnect the user's AWS account and remove stored credentials."""
+    account = _get_user_cloud_account(db, current_user)
+    if not account:
+        raise HTTPException(status_code=404, detail="No AWS account connected.")
+
+    account.status = CloudAccountStatus.DISCONNECTED
+    account.aws_access_key_enc = None
+    account.aws_secret_key_enc = None
+    account.last_sync_at = None
+    db.commit()
+
+    return {"message": "AWS account disconnected successfully"}
 
 
 # ------------------------------------------------------------------
@@ -228,8 +252,10 @@ def scan_aws(
 
     try:
         # Re-establish boto3 session via STS validation
+        access_key = decrypt(account.aws_access_key_enc)
+        secret_key = decrypt(account.aws_secret_key_enc)
         aws_result = aws_service.connect_aws(
-            account.aws_access_key_enc, account.aws_secret_key_enc, region
+            access_key, secret_key, region
         )
         session = aws_result["session"]
 
