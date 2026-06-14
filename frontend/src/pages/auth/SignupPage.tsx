@@ -154,28 +154,7 @@ export function SignupPage() {
               </div>
             ))}
           </div>
-
-          {/* Social proof */}
-          <div style={{ marginTop: "2.5rem", padding: "1.25rem", borderRadius: 16, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div style={{ display: "flex", marginBottom: "0.75rem" }}>
-              {["NK", "SR", "AM", "PG"].map((init, i) => (
-                <div key={i} style={{
-                  width: 32, height: 32, borderRadius: "50%", marginLeft: i > 0 ? -8 : 0,
-                  background: `hsl(${240 + i * 30}, 60%, 55%)`,
-                  border: "2px solid #0a0820",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.7rem", fontWeight: 700, color: "#fff",
-                }}>
-                  {init}
-                </div>
-              ))}
-            </div>
-            <p style={{ fontSize: "0.85rem", color: "#8B93B5" }}>
-              Join <strong style={{ color: "#EEF2FF" }}>2,400+ engineers</strong> already optimizing with CloudWise.
-            </p>
-          </div>
         </div>
-
         <p className="relative z-10 text-xs" style={{ color: "#4B5680" }}>© 2025 CloudWise AI · All rights reserved</p>
       </div>
 
