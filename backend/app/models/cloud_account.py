@@ -53,10 +53,8 @@ class CloudAccount(Base):
     role_arn: Mapped[str | None] = mapped_column(String, nullable=True)
     external_id: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    # HACKATHON MVP ONLY: Store credentials in DB so /scan doesn't require
-    # re-entry. In production, use AWS Secrets Manager or STS AssumeRole.
-    # These columns store the raw keys — acceptable for a demo but MUST be
-    # replaced with a vault-backed approach before any real deployment.
+    # Credentials are encrypted at rest using Fernet symmetric encryption.
+    # In a full enterprise production environment, consider augmenting this with AWS STS AssumeRole cross-account patterns.
     aws_access_key_enc: Mapped[str | None] = mapped_column(String, nullable=True)
     aws_secret_key_enc: Mapped[str | None] = mapped_column(String, nullable=True)
     region: Mapped[str | None] = mapped_column(String(50), nullable=True, default="us-east-1")
