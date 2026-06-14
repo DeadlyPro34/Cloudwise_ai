@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import {
   Cloud, TrendingUp, Lightbulb, MessageSquareText,
   Activity, Zap, ArrowRight, CheckCircle,
+  Twitter, Github, Linkedin
 } from "lucide-react";
 
 /* ── Typewriter hook ── */
@@ -133,7 +134,6 @@ export function LandingPage() {
     const section = document.getElementById(id);
     if (section) {
       section.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.pushState(null, "", `#${id}`);
     }
   };
 
@@ -167,7 +167,7 @@ export function LandingPage() {
       <header
         className="sticky top-0 z-50 flex items-center justify-between px-8"
         style={{
-          height: 60,
+          height: 56,
           background: "rgba(5,5,8,0.8)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
@@ -398,10 +398,12 @@ export function LandingPage() {
         </div>
       </section>
 
+      <Footer />
+
       {/* Blink keyframe injected inline */}
       <style>{`
         html { scroll-behavior: smooth; }
-        #features, #pricing, #docs { scroll-margin-top: 64px; }
+        #features, #pricing, #docs, #why { scroll-margin-top: 56px; }
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
@@ -437,8 +439,144 @@ export function LandingPage() {
           .value-props-card { padding: 12px 14px; }
           .value-props-card-text { font-size: 13px; }
         }
+
+        /* Footer CSS */
+        .footer-section {
+          background: #080a12;
+          border-top: 0.5px solid rgba(255,255,255,0.08);
+          padding: 48px 64px 28px;
+          position: relative;
+          z-index: 10;
+        }
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 32px;
+          max-width: 1100px;
+          margin: 0 auto;
+        }
+        .footer-heading {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: .07em;
+          color: #6b7280;
+          margin-bottom: 1rem;
+        }
+        .footer-col {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        .footer-link {
+          font-size: 13px;
+          color: #9ca3af;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .footer-link:hover {
+          color: #fff;
+        }
+        .footer-bottom {
+          border-top: 0.5px solid rgba(255,255,255,0.06);
+          margin-top: 40px;
+          padding-top: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          max-width: 1100px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .footer-copyright {
+          font-size: 12px;
+          color: #6b7280;
+        }
+        .footer-socials {
+          display: flex;
+          gap: 1rem;
+        }
+        .footer-social-link {
+          color: #6b7280;
+          transition: color 0.2s;
+        }
+        .footer-social-link:hover {
+          color: #9ca3af;
+        }
+
+        @media (max-width: 768px) {
+          .footer-section { padding: 48px 32px 28px; }
+          .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+          .footer-section { padding: 40px 20px 24px; }
+          .footer-grid { grid-template-columns: 1fr; }
+          .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+        }
       `}</style>
     </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer-section">
+      <div className="footer-grid">
+        {/* Logo Column */}
+        <div className="footer-col" style={{ gap: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
+            <div style={{
+              width: 30, height: 30, borderRadius: 8,
+              background: "linear-gradient(135deg, #5B52F0, #7B75FF)",
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              <Zap className="w-4 h-4 text-white" />
+            </div>
+            <span style={{ fontSize: "1.05rem", fontWeight: 700, color: "#EEF2FF", letterSpacing: "-0.01em" }}>
+              CloudWise AI
+            </span>
+          </div>
+          <p style={{ color: "#9ca3af", fontSize: "13px", lineHeight: 1.5, maxWidth: "240px" }}>
+            Actionable FinOps intelligence for modern engineering teams.
+          </p>
+        </div>
+
+        {/* Product Links */}
+        <div className="footer-col">
+          <h4 className="footer-heading">Product</h4>
+          <a href="#features" className="footer-link">Features</a>
+          <a href="#pricing" className="footer-link">Pricing</a>
+          <a href="#docs" className="footer-link">Documentation</a>
+          <a href="#" className="footer-link">Changelog</a>
+        </div>
+
+        {/* Company Links */}
+        <div className="footer-col">
+          <h4 className="footer-heading">Company</h4>
+          <a href="#" className="footer-link">About Us</a>
+          <a href="#" className="footer-link">Careers</a>
+          <a href="#" className="footer-link">Blog</a>
+          <a href="#" className="footer-link">Contact</a>
+        </div>
+
+        {/* Legal Links */}
+        <div className="footer-col">
+          <h4 className="footer-heading">Legal</h4>
+          <a href="#" className="footer-link">Privacy Policy</a>
+          <a href="#" className="footer-link">Terms of Service</a>
+          <a href="#" className="footer-link">Security (SOC 2)</a>
+          <a href="#" className="footer-link">Cookie Policy</a>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <p className="footer-copyright">© 2026 CloudWise AI · All rights reserved</p>
+        <div className="footer-socials">
+          <a href="#" className="footer-social-link"><Twitter className="w-4 h-4" /></a>
+          <a href="#" className="footer-social-link"><Github className="w-4 h-4" /></a>
+          <a href="#" className="footer-social-link"><Linkedin className="w-4 h-4" /></a>
+        </div>
+      </div>
+    </footer>
   );
 }
 
