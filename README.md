@@ -136,9 +136,14 @@ App available at `http://localhost:5173`
 See [Security Policy](./docs/Security_Policy_v1.0.md). Key practices:
 - Passwords hashed with Argon2, never stored in plaintext
 - JWT-based authentication
+- AWS credentials encrypted at rest using Fernet symmetric encryption
 - AWS access via read-only IAM roles only — no long-term credentials stored
 - Rate limiting on auth and AI endpoints
 - Security headers (HSTS, CSP, X-Frame-Options, etc.)
+
+> **Note:** JWT tokens are stored in localStorage for development simplicity.
+> A production deployment should use httpOnly cookies as described
+> in the Security Policy document.
 
 ---
 

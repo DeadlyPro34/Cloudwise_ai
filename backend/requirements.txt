@@ -22,6 +22,7 @@ python-jose[cryptography]==3.3.0
 passlib[argon2]==1.7.4
 python-multipart==0.0.12
 slowapi==0.1.9
+cryptography==42.0.8
 
 # --- AWS Integration ---
 boto3==1.35.36

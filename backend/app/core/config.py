@@ -60,6 +60,13 @@ class Settings(BaseSettings):
     RATE_LIMIT_REGISTER: str = "5/minute"
     RATE_LIMIT_COPILOT: str = "30/minute"
 
+    # ------------------------------------------------------------
+    # Encryption (Fernet symmetric key for at-rest credential storage)
+    # Generate with:
+    # python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+    # ------------------------------------------------------------
+    ENCRYPTION_KEY: str = ""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
