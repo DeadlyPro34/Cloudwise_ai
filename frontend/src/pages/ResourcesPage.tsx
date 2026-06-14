@@ -76,13 +76,13 @@ export function ResourcesPage() {
           </div>
           <h3 className="mb-2">No Resources Found</h3>
           <p className="caption mb-6 max-w-sm mx-auto">
-            Connect your AWS account and run a scan to discover your cloud resources.
+            No resources found. Connect your AWS account and run a scan to discover your infrastructure.
           </p>
           <Button
             onClick={() => navigate("/onboarding")}
             className="flex items-center justify-center gap-2 mx-auto"
           >
-            Connect AWS Account <ArrowRight className="w-4 h-4" />
+            Go to Onboarding <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
       </div>

@@ -94,10 +94,9 @@ export function RecommendationsPage() {
           >
             <Lightbulb className="w-10 h-10" style={{ color: "var(--color-accent-hover)" }} />
           </div>
-          <h3 className="mb-2">No Recommendations Yet</h3>
+          <h3 className="mb-2">No recommendations yet.</h3>
           <p className="caption mb-6 max-w-sm mx-auto">
-            Connect your AWS account and run a scan. Our AI will analyze your resources and
-            generate cost-saving recommendations.
+            Connect AWS and run a scan to discover cost-saving opportunities.
           </p>
           <Button
             onClick={() => navigate("/onboarding")}
