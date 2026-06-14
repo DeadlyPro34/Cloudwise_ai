@@ -1,11 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Zap, Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Zap, Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Shield, Zap as ZapIcon, TrendingUp } from "lucide-react";
 import { useAuth } from "../../store/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { getApiErrorMessage } from "../../services/apiClient";
 
-/* ── Field lives OUTSIDE the page component so React never remounts it ── */
 interface FieldProps {
   id: string;
   label: string;
@@ -19,17 +18,14 @@ interface FieldProps {
   rightSlot?: React.ReactNode;
 }
 
-function Field({
-  id, label, type = "text", placeholder, value, onChange,
-  required, autoComplete, icon: Icon, rightSlot,
-}: FieldProps) {
+function Field({ id, label, type = "text", placeholder, value, onChange, required, autoComplete, icon: Icon, rightSlot }: FieldProps) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-      <label htmlFor={id} style={{ fontSize: "0.85rem", fontWeight: 600, color: "#8B93B5", letterSpacing: "0.03em" }}>
+      <label htmlFor={id} style={{ fontSize: "0.82rem", fontWeight: 600, color: "#8B93B5", letterSpacing: "0.03em" }}>
         {label}
       </label>
       <div style={{ position: "relative" }}>
-        <Icon className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#4B5680" }} />
+        <Icon className="w-4 h-4" style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", color: "#4B5680", pointerEvents: "none" }} />
         <input
           id={id}
           type={type}
@@ -51,24 +47,30 @@ function Field({
   );
 }
 
+const PERKS = [
+  { icon: ZapIcon, title: "Setup in 2 minutes", desc: "Connect your AWS account with a read-only IAM role. No code changes." },
+  { icon: TrendingUp, title: "Instant cost insights", desc: "Your first dashboard populates within minutes of connecting." },
+  { icon: Shield, title: "SOC 2 Type II secure", desc: "We never write to your AWS account. Your data stays yours." },
+];
+
 export function SignupPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [firstName,       setFirstName]       = useState("");
-  const [lastName,        setLastName]         = useState("");
-  const [email,           setEmail]            = useState("");
-  const [password,        setPassword]         = useState("");
-  const [confirmPassword, setConfirmPassword]  = useState("");
-  const [showPass,        setShowPass]         = useState(false);
-  const [showConfirm,     setShowConfirm]      = useState(false);
-  const [error,           setError]            = useState<string | null>(null);
-  const [isSubmitting,    setIsSubmitting]     = useState(false);
+  const [firstName,       setFirstName]      = useState("");
+  const [lastName,        setLastName]        = useState("");
+  const [email,           setEmail]           = useState("");
+  const [password,        setPassword]        = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPass,        setShowPass]        = useState(false);
+  const [showConfirm,     setShowConfirm]     = useState(false);
+  const [error,           setError]           = useState<string | null>(null);
+  const [isSubmitting,    setIsSubmitting]    = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (password !== confirmPassword) { setError("Passwords do not match.");             return; }
+    if (password !== confirmPassword) { setError("Passwords do not match."); return; }
     if (password.length < 8)          { setError("Password must be at least 8 characters."); return; }
     setIsSubmitting(true);
     try {
@@ -81,188 +83,173 @@ export function SignupPage() {
     }
   }
 
-  const eyeBtn = (visible: boolean, toggle: () => void) => (
-    <button
-      type="button"
-      onClick={toggle}
-      style={{ background: "none", border: "none", cursor: "pointer", color: "#4B5680", padding: 0, display: "flex" }}
-    >
-      {visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-    </button>
-  );
-
-  const strength = Math.min(Math.floor(password.length / 3), 4);
-  const strengthLabel = password.length < 8 ? "Too short" : password.length < 12 ? "Moderate" : password.length < 16 ? "Strong" : "Very strong";
-  const strengthColors = ["#F87171", "#FBBF24", "#60A5FA", "#34D399"];
-
   return (
     <div style={{ minHeight: "100vh", display: "flex", background: "#050508", overflow: "hidden", position: "relative" }}>
 
-      {/* ── Left panel ── */}
+      {/* ── Left panel (hidden on mobile via CSS class) ── */}
       <div
-        className="hidden lg:flex flex-col justify-between p-12 relative overflow-hidden"
-        style={{ width: "42%", flexShrink: 0 }}
+        className="auth-left-panel"
+        style={{
+          width: "42%",
+          flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "3rem",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0a0820 0%, #0f0b2b 50%, #0a0820 100%)" }} />
-        <div style={{
-          position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)",
-          width: 480, height: 480, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(91,82,240,0.3) 0%, transparent 70%)",
-          filter: "blur(60px)", pointerEvents: "none",
-        }} />
-        <div style={{
-          position: "absolute", inset: 0,
-          backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)",
-          backgroundSize: "48px 48px", pointerEvents: "none",
-        }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #060412 0%, #0d0a28 50%, #060412 100%)" }} />
+        <div style={{ position: "absolute", top: "35%", left: "50%", transform: "translate(-50%,-50%)", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle,rgba(91,82,240,0.3) 0%,transparent 70%)", filter: "blur(70px)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "52px 52px", pointerEvents: "none" }} />
 
         {/* Logo */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg, #5B52F0, #7B75FF)", boxShadow: "0 4px 20px rgba(91,82,240,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,#5B52F0,#7B75FF)", boxShadow: "0 4px 20px rgba(91,82,240,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Zap className="w-5 h-5 text-white" />
           </div>
           <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "#EEF2FF", fontFamily: "var(--font-sans)" }}>CloudWise AI</span>
         </div>
 
-        {/* Steps */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center">
-          <h2 style={{ fontSize: "1.7rem", color: "#EEF2FF", marginBottom: "0.75rem" }}>Get started in minutes</h2>
-          <p style={{ fontSize: "0.95rem", color: "#8B93B5", marginBottom: "2.5rem", lineHeight: 1.6 }}>
-            Connect your AWS account and start finding savings — no credit card required.
+        {/* Perks */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", color: "#EEF2FF", marginBottom: "0.75rem", fontWeight: 700, letterSpacing: "-0.02em" }}>
+            Start saving in minutes
+          </h2>
+          <p style={{ color: "#8B93B5", lineHeight: 1.65, marginBottom: "2.5rem", fontSize: "0.95rem" }}>
+            Join engineering teams who've reduced their AWS bills by an average of 48%.
           </p>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {[
-              { n: "1", title: "Create your account", desc: "Sign up in under 60 seconds." },
-              { n: "2", title: "Connect AWS",          desc: "Link via IAM role — read-only, secure." },
-              { n: "3", title: "See your savings",     desc: "AI surfaces waste and optimizations instantly." },
-            ].map(({ n, title, desc }) => (
-              <div key={n} style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                  background: "linear-gradient(135deg, rgba(91,82,240,0.3), rgba(123,117,255,0.2))",
-                  border: "1px solid rgba(91,82,240,0.3)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.85rem", fontWeight: 700, color: "#7B75FF",
-                }}>
-                  {n}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            {PERKS.map(({ icon: Icon, title, desc }) => (
+              <div key={title} style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(91,82,240,0.15)", border: "1px solid rgba(91,82,240,0.25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon size={18} color="#7B75FF" />
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: "#EEF2FF", marginBottom: "0.2rem" }}>{title}</p>
-                  <p style={{ fontSize: "0.85rem", color: "#8B93B5" }}>{desc}</p>
+                  <p style={{ color: "#EEF2FF", fontWeight: 600, margin: "0 0 0.2rem", fontSize: "0.9rem" }}>{title}</p>
+                  <p style={{ color: "#8B93B5", fontSize: "0.825rem", margin: 0, lineHeight: 1.55 }}>{desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <p className="relative z-10 text-xs" style={{ color: "#4B5680" }}>© 2025 CloudWise AI · All rights reserved</p>
+
+        <p style={{ position: "relative", zIndex: 1, fontSize: "0.75rem", color: "#4B5680" }}>© 2026 CloudWise AI · All rights reserved</p>
       </div>
 
       {/* ── Right panel (form) ── */}
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", overflowY: "auto", position: "relative" }}>
-        <div style={{
-          position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
-          width: 600, height: 600, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(91,82,240,0.07) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
+      <div
+        className="auth-right-panel"
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem 1.5rem",
+          overflowY: "auto",
+          position: "relative",
+        }}
+      >
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle,rgba(91,82,240,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
 
-        <div className="animate-scale-in" style={{ width: "100%", maxWidth: 430, position: "relative", zIndex: 1 }}>
+        <div className="animate-scale-in" style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
+
           {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-2.5 mb-10">
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #5B52F0, #7B75FF)", boxShadow: "0 4px 16px rgba(91,82,240,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div
+            className="show-mobile"
+            style={{ display: "none", alignItems: "center", gap: "0.5rem", marginBottom: "2rem" }}
+          >
+            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,#5B52F0,#7B75FF)", boxShadow: "0 4px 16px rgba(91,82,240,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span style={{ fontSize: "1rem", fontWeight: 600, color: "#EEF2FF" }}>CloudWise AI</span>
           </div>
 
+          {/* Heading */}
           <div style={{ marginBottom: "2rem" }}>
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-(--color-text-secondary) hover:text-(--color-text-primary) transition-colors mb-6">
-              <ArrowLeft className="w-4 h-4" />
-              Back to home
+            <Link
+              to="/"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.875rem", color: "var(--color-text-secondary)", textDecoration: "none", marginBottom: "1.25rem", transition: "color 0.2s" }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#EEF2FF")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--color-text-secondary)")}
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to home
             </Link>
-            <h2 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Create account</h2>
-            <p className="caption">Start optimizing your cloud costs — free forever.</p>
+            <h2 style={{ fontSize: "clamp(1.6rem, 4vw, 2rem)", marginBottom: "0.4rem", color: "#EEF2FF" }}>Create your account</h2>
+            <p className="caption">Free forever · No credit card required</p>
           </div>
 
+          {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
             {/* Name row */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem" }}>
-              <Field id="firstName" label="First name" placeholder="Krisha" icon={User} value={firstName} onChange={setFirstName} autoComplete="given-name" />
-              <Field id="lastName"  label="Last name"  placeholder="Kalal"  icon={User} value={lastName}  onChange={setLastName}  autoComplete="family-name" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+              <Field id="firstName" label="First name" placeholder="Jane" value={firstName} onChange={setFirstName} autoComplete="given-name" icon={User} />
+              <Field id="lastName"  label="Last name"  placeholder="Smith" value={lastName}  onChange={setLastName}  autoComplete="family-name" icon={User} />
             </div>
 
             <Field
               id="email" label="Email address" type="email"
-              placeholder="you@company.com" icon={Mail}
-              value={email} onChange={setEmail} required autoComplete="email"
+              placeholder="you@company.com" value={email} onChange={setEmail}
+              required autoComplete="email" icon={Mail}
             />
 
             <Field
-              id="password" label="Password"
-              type={showPass ? "text" : "password"}
-              placeholder="Minimum 8 characters" icon={Lock}
-              value={password} onChange={setPassword} required autoComplete="new-password"
-              rightSlot={eyeBtn(showPass, () => setShowPass((v) => !v))}
+              id="password" label="Password" type={showPass ? "text" : "password"}
+              placeholder="Min. 8 characters" value={password} onChange={setPassword}
+              required autoComplete="new-password" icon={Lock}
+              rightSlot={
+                <button type="button" onClick={() => setShowPass(!showPass)} style={{ background: "none", border: "none", cursor: "pointer", color: "#4B5680", padding: 0, display: "flex" }}>
+                  {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
 
             <Field
-              id="confirmPassword" label="Confirm password"
-              type={showConfirm ? "text" : "password"}
-              placeholder="Repeat your password" icon={Lock}
-              value={confirmPassword} onChange={setConfirmPassword} required autoComplete="new-password"
-              rightSlot={eyeBtn(showConfirm, () => setShowConfirm((v) => !v))}
+              id="confirmPassword" label="Confirm password" type={showConfirm ? "text" : "password"}
+              placeholder="Re-enter your password" value={confirmPassword} onChange={setConfirmPassword}
+              required autoComplete="new-password" icon={Lock}
+              rightSlot={
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ background: "none", border: "none", cursor: "pointer", color: "#4B5680", padding: 0, display: "flex" }}>
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
-
-            {/* Password strength bar */}
-            {password.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <div style={{ display: "flex", gap: "0.3rem" }}>
-                  {[0, 1, 2, 3].map((i) => (
-                    <div key={i} style={{
-                      flex: 1, height: 3, borderRadius: 99,
-                      background: i < strength ? strengthColors[strength - 1] : "rgba(255,255,255,0.08)",
-                      transition: "background 0.3s ease",
-                    }} />
-                  ))}
-                </div>
-                <p style={{ fontSize: "0.75rem", color: "#8B93B5" }}>{strengthLabel}</p>
-              </div>
-            )}
 
             {/* Error */}
             {error && (
-              <div className="animate-fade-in" style={{
-                display: "flex", alignItems: "flex-start", gap: "0.6rem",
-                padding: "0.85rem 1rem", borderRadius: 12,
-                background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)",
-                color: "#F87171", fontSize: "0.875rem",
-              }}>
+              <div
+                className="animate-fade-in"
+                style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", padding: "0.85rem 1rem", borderRadius: 12, background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)", color: "#F87171", fontSize: "0.875rem" }}
+              >
                 <span style={{ marginTop: 1, flexShrink: 0 }}>⚠</span>
                 <span>{error}</span>
               </div>
             )}
 
             <Button type="submit" isLoading={isSubmitting} className="w-full" size="lg" style={{ marginTop: "0.25rem" }}>
-              {!isSubmitting && (<>Create Account<ArrowRight className="w-4 h-4 ml-1" /></>)}
+              {!isSubmitting && <><span>Create Account</span><ArrowRight className="w-4 h-4 ml-1" /></>}
             </Button>
 
-            <p style={{ fontSize: "0.75rem", color: "#4B5680", textAlign: "center" }}>
+            <p style={{ fontSize: "0.75rem", color: "#4B5680", textAlign: "center", lineHeight: 1.5, margin: "0.25rem 0" }}>
               By creating an account you agree to our{" "}
-              <a href="#" style={{ color: "#7B75FF" }}>Terms</a> &amp;{" "}
-              <a href="#" style={{ color: "#7B75FF" }}>Privacy Policy</a>
+              <Link to="/terms" style={{ color: "#7B75FF", textDecoration: "none" }}>Terms of Service</Link>
+              {" "}and{" "}
+              <Link to="/privacy" style={{ color: "#7B75FF", textDecoration: "none" }}>Privacy Policy</Link>.
             </p>
           </form>
 
+          {/* Divider */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: "1.5rem 0" }}>
             <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
-            <span style={{ fontSize: "0.8rem", color: "#4B5680" }}>already have an account?</span>
+            <span style={{ fontSize: "0.8rem", color: "#4B5680" }}>or</span>
             <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
           </div>
 
-          <Link to="/login" className="btn-secondary w-full" style={{ display: "flex", justifyContent: "center" }}>
-            Sign In Instead
-          </Link>
+          <p style={{ textAlign: "center", fontSize: "0.9rem", color: "#8B93B5" }}>
+            Already have an account?{" "}
+            <Link to="/login" style={{ color: "#7B75FF", fontWeight: 600, textDecoration: "none" }}>Sign in</Link>
+          </p>
         </div>
       </div>
     </div>

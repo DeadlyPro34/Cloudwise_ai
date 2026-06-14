@@ -1,7 +1,11 @@
-import { Search, Bell, LogOut, ChevronDown } from "lucide-react";
+import { Search, Bell, LogOut, ChevronDown, Menu } from "lucide-react";
 import { useAuth } from "../../store/AuthContext";
 
-export function TopNav() {
+interface TopNavProps {
+  onMenuToggle?: () => void;
+}
+
+export function TopNav({ onMenuToggle }: TopNavProps) {
   const { user, logout } = useAuth();
 
   const initials = user
@@ -15,21 +19,48 @@ export function TopNav() {
 
   return (
     <header
-      className="h-16 flex items-center justify-between px-6 shrink-0"
+      className="h-16 flex items-center justify-between shrink-0"
       style={{
         background: "rgba(8, 12, 24, 0.7)",
         backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
+        padding: "0 1rem 0 1.25rem",
+        gap: "0.75rem",
       }}
     >
+      {/* Mobile hamburger — hidden on desktop via CSS class */}
+      <button
+        className="mobile-menu-trigger"
+        onClick={onMenuToggle}
+        aria-label="Open navigation"
+        style={{
+          display: "none", /* overridden to flex on mobile by CSS */
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 8,
+          color: "var(--color-text-secondary)",
+          width: 36,
+          height: 36,
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          flexShrink: 0,
+        }}
+      >
+        <Menu className="w-4 h-4" />
+      </button>
+
       {/* Search */}
       <div
-        className="flex items-center gap-2.5 px-4 py-2.5 w-80 max-w-full transition-all duration-200 focus-within:ring-2"
+        className="flex items-center gap-2.5 px-4 py-2.5 transition-all duration-200 focus-within:ring-2"
         style={{
           background: "rgba(22, 30, 48, 0.8)",
           border: "1px solid rgba(255,255,255,0.07)",
           borderRadius: "10px",
           outline: "none",
+          flex: 1,
+          maxWidth: 340,
         }}
         onFocusCapture={(e) => {
           (e.currentTarget as HTMLDivElement).style.borderColor = "var(--color-accent)";
@@ -43,7 +74,7 @@ export function TopNav() {
         <Search className="w-4 h-4 shrink-0" style={{ color: "var(--color-text-muted)" }} />
         <input
           type="text"
-          placeholder="Search resources, recommendations…"
+          placeholder="Search…"
           className="bg-transparent outline-none text-sm w-full"
           style={{
             color: "var(--color-text-primary)",
@@ -77,7 +108,7 @@ export function TopNav() {
             (e.currentTarget as HTMLButtonElement).style.color = "var(--color-text-secondary)";
           }}
         >
-          <Bell className="w-4.5 h-4.5" />
+          <Bell className="w-4 h-4" />
           {/* Notification dot */}
           <span
             className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"

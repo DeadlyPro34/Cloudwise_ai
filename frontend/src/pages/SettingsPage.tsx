@@ -138,19 +138,48 @@ export function SettingsPage() {
           </div>
 
           {/* Status indicator */}
-          <div className="flex items-center gap-2 mb-4">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "0.5rem",
+              marginBottom: "1rem",
+              flexWrap: "wrap",
+              minWidth: 0,
+            }}
+          >
             {isConfigured ? (
               <>
-                <Check className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-green-400">Groq API key is configured</span>
-                {maskedKey && (
-                  <span className="text-xs text-(--color-text-secondary) ml-2 font-mono">{maskedKey}</span>
-                )}
+                <Check className="w-4 h-4 text-green-400 shrink-0" style={{ marginTop: 2 }} />
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <span className="text-sm text-green-400">Groq API key is configured</span>
+                  {maskedKey && (
+                    <div
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-secondary)",
+                        marginTop: "0.2rem",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "100%",
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: 6,
+                        padding: "0.25rem 0.5rem",
+                      }}
+                      title={maskedKey}
+                    >
+                      {maskedKey}
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
-                <AlertCircle className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm text-yellow-400">No Groq API key set — Copilot won't work until configured</span>
+                <AlertCircle className="w-4 h-4 text-yellow-400 shrink-0" style={{ marginTop: 2 }} />
+                <span className="text-sm text-yellow-400" style={{ minWidth: 0 }}>No Groq API key set — Copilot won't work until configured</span>
               </>
             )}
           </div>
@@ -160,8 +189,15 @@ export function SettingsPage() {
               <label className="block text-sm text-(--color-text-secondary) mb-1">
                 {isConfigured ? "Update Groq API Key" : "Enter Groq API Key"}
               </label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.6rem",
+                  flexWrap: "wrap",
+                  alignItems: "stretch",
+                }}
+              >
+                <div style={{ position: "relative", flex: "1 1 180px", minWidth: 0 }}>
                   <input
                     type={showKey ? "text" : "password"}
                     value={apiKey}
@@ -169,6 +205,7 @@ export function SettingsPage() {
                     placeholder="gsk_..."
                     className="input-field w-full pr-10"
                     onKeyDown={(e) => e.key === "Enter" && handleSave()}
+                    style={{ minWidth: 0 }}
                   />
                   <button
                     type="button"
@@ -178,7 +215,7 @@ export function SettingsPage() {
                     {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <Button onClick={handleSave} disabled={saving || !apiKey.trim()}>
+                <Button onClick={handleSave} disabled={saving || !apiKey.trim()} style={{ flexShrink: 0 }}>
                   {saving ? "Saving..." : "Save"}
                 </Button>
               </div>

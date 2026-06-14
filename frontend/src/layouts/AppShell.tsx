@@ -1,24 +1,17 @@
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
 import { Sidebar } from "../components/layout/Sidebar";
 import { TopNav } from "../components/layout/TopNav";
 
-/**
- * AppShell - per UI/UX Brief Section 8:
- *
- * ┌─────────────────────────────────────┐
- * │            Top Navigation            │
- * ├────────────┬────────────────────────┤
- * │  Sidebar   │      Main Content       │
- * │            │                          │
- * └────────────┴────────────────────────┘
- */
 export function AppShell() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopNav />
-        <main className="flex-1 overflow-y-auto p-6">
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
+        <TopNav onMenuToggle={() => setSidebarOpen((o) => !o)} />
+        <main style={{ flex: 1, overflowY: "auto", padding: "1.5rem" }}>
           <Outlet />
         </main>
       </div>

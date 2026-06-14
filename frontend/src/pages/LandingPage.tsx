@@ -442,25 +442,36 @@ function FooterCol({
   links,
 }: {
   heading: string;
-  links: { label: string }[];
+  links: { label: string; href: string }[];
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
       <p style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.07em", color: "#4b5563", marginBottom: "0.25rem", fontWeight: 700 }}>
         {heading}
       </p>
-      {links.map(({ label }) => (
-        <span
-          key={label}
-          style={{
-            fontSize: "0.95rem",
-            color: "#9ca3af",
-            fontFamily: "inherit",
-          }}
-        >
-          {label}
-        </span>
-      ))}
+      {links.map(({ label, href }) =>
+        href.startsWith("/") && !href.startsWith("/#") ? (
+          <Link
+            key={label}
+            to={href}
+            style={{ fontSize: "0.9rem", color: "#9ca3af", textDecoration: "none", transition: "color 0.2s", fontFamily: "inherit" }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#EEF2FF")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "#9ca3af")}
+          >
+            {label}
+          </Link>
+        ) : (
+          <a
+            key={label}
+            href={href}
+            style={{ fontSize: "0.9rem", color: "#9ca3af", textDecoration: "none", transition: "color 0.2s", fontFamily: "inherit" }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#EEF2FF")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "#9ca3af")}
+          >
+            {label}
+          </a>
+        )
+      )}
     </div>
   );
 }
@@ -504,15 +515,27 @@ function Footer() {
 
         <FooterCol
           heading="Quick Links"
-          links={[{ label: "Features" }, { label: "Why Us" }, { label: "Documentation" }]}
+          links={[
+            { label: "Features", href: "/#features" },
+            { label: "Why Us", href: "/#why-us" },
+            { label: "Docs", href: "/docs" }
+          ]}
         />
         <FooterCol
           heading="Company"
-          links={[{ label: "About Us" }, { label: "Contact" }]}
+          links={[
+            { label: "About Us", href: "/about" },
+            { label: "Contact", href: "/contact" },
+          ]}
         />
         <FooterCol
           heading="Legal"
-          links={[{ label: "Privacy Policy" }, { label: "Terms of Service" }, { label: "Security (SOC 2)" }, { label: "Cookie Policy" }]}
+          links={[
+            { label: "Privacy Policy", href: "/privacy" },
+            { label: "Terms of Service", href: "/terms" },
+            { label: "Security (SOC 2)", href: "/security" },
+            { label: "Cookie Policy", href: "/cookies" },
+          ]}
         />
       </div>
 
@@ -618,34 +641,36 @@ export function LandingPage() {
         {/* Header row */}
         <div
           className="header-inner"
-          style={{ height: 72, padding: "0 3rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+          style={{ height: 64, padding: "0 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1200, margin: "0 auto", width: "100%" }}
         >
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <div style={{ width: 38, height: 38, borderRadius: 11, background: "linear-gradient(135deg,#5B52F0,#7B75FF)", boxShadow: "0 4px 16px rgba(91,82,240,0.45)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Zap className="w-5 h-5 text-white" />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexShrink: 0 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,#5B52F0,#7B75FF)", boxShadow: "0 4px 16px rgba(91,82,240,0.45)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Zap className="w-4 h-4 text-white" />
             </div>
-            <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#EEF2FF", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em" }}>
+            <span style={{ fontSize: "1.05rem", fontWeight: 700, color: "#EEF2FF", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
               CloudWise AI
             </span>
           </div>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center" style={{ gap: "2.5rem" }}>
+          {/* Desktop nav — hidden on mobile via CSS class */}
+          <nav className="landing-nav-links" style={{ gap: "2rem" }}>
             <NavAnchor label="Features" href="#features" isActive={activeSection === "features"} onClick={(e) => scrollTo(e, "features")} />
             <NavAnchor label="Why Us"   href="#why"      isActive={activeSection === "why"}      onClick={(e) => scrollTo(e, "why")} />
             <NavAnchor label="Docs"     href="#docs"     badge="new" isActive={activeSection === "docs"} onClick={(e) => scrollTo(e, "docs")} />
           </nav>
 
-          {/* Right: CTA + hamburger */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <Link to="/login"  className="btn-secondary" style={{ padding: "0.55rem 1.25rem", fontSize: "0.9rem" }}>Log In</Link>
-            <Link to="/signup" className="btn-primary"   style={{ padding: "0.55rem 1.25rem", fontSize: "0.9rem" }}>Get Started</Link>
-
+          {/* Right: CTAs (hidden on mobile) + hamburger (hidden on desktop) */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            <div className="landing-nav-ctas">
+              <Link to="/login"  className="btn-secondary" style={{ padding: "0.48rem 1.1rem", fontSize: "0.875rem" }}>Log In</Link>
+              <Link to="/signup" className="btn-primary"   style={{ padding: "0.48rem 1.1rem", fontSize: "0.875rem" }}>Get Started</Link>
+            </div>
             <button
-              className="md:hidden"
+              className="landing-hamburger"
               onClick={() => setMobileMenuOpen((o) => !o)}
               aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
               style={{
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -653,14 +678,11 @@ export function LandingPage() {
                 color: "#8B93B5",
                 width: 36,
                 height: 36,
-                display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
                 flexShrink: 0,
               }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.1)")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)")}
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
@@ -670,19 +692,21 @@ export function LandingPage() {
         {/* Mobile dropdown */}
         {mobileMenuOpen && (
           <nav
-            className="md:hidden"
             style={{
               borderTop: "1px solid rgba(255,255,255,0.07)",
-              background: "rgba(5,5,8,0.97)",
-              padding: "1rem 1.5rem 1.25rem",
+              background: "rgba(5,5,8,0.98)",
+              padding: "1rem 1.5rem 1.5rem",
               display: "flex",
               flexDirection: "column",
-              gap: "1rem",
+              gap: "0.75rem",
             }}
           >
             <NavAnchor label="Features" href="#features" isActive={activeSection === "features"} onClick={(e) => scrollTo(e, "features")} />
             <NavAnchor label="Why Us"   href="#why"      isActive={activeSection === "why"}      onClick={(e) => scrollTo(e, "why")} />
             <NavAnchor label="Docs"     href="#docs"     badge="new" isActive={activeSection === "docs"} onClick={(e) => scrollTo(e, "docs")} />
+            <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "0.25rem 0" }} />
+            <Link to="/login"  style={{ color: "#8B93B5", textDecoration: "none", fontSize: "0.95rem", padding: "0.25rem 0" }}>Log In</Link>
+            <Link to="/signup" style={{ color: "#fff", textDecoration: "none", fontSize: "0.95rem", background: "linear-gradient(135deg,#5B52F0,#7B75FF)", padding: "0.65rem 1rem", borderRadius: 8, textAlign: "center", fontWeight: 600 }}>Get Started</Link>
           </nav>
         )}
       </header>
@@ -872,25 +896,32 @@ export function LandingPage() {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
-        .hero-h1 { font-size: clamp(2rem, 6vw, 3.5rem); }
+        .hero-h1 { font-size: clamp(1.85rem, 6vw, 3.5rem); line-height: 1.2; }
         .stats-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 3rem; }
         .why-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; text-align: left; max-width: 700px; margin: 0 auto; }
+        @media (max-width: 1024px) {
+          .header-inner { max-width: 100% !important; }
+        }
         @media (max-width: 768px) {
-          .header-inner { padding: 0 1.25rem !important; }
-          .hero-section { padding-top: 4rem !important; padding-bottom: 4rem !important; }
-          .stats-row { display: grid !important; grid-template-columns: repeat(3,1fr); gap: 1.5rem !important; }
-          .cta-section { padding-top: 3rem !important; padding-bottom: 3rem !important; }
-          .cta-card { padding: 2rem 1.5rem !important; }
-          footer { padding: 48px 28px 28px !important; }
-          .footer-grid { grid-template-columns: 1fr 1fr !important; }
+          .hero-section { padding-top: 3.5rem !important; padding-bottom: 3.5rem !important; padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+          .stats-row { display: grid !important; grid-template-columns: repeat(3,1fr); gap: 1rem !important; }
+          .cta-section { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; padding-left: 1rem !important; padding-right: 1rem !important; }
+          .cta-card { padding: 2rem 1.25rem !important; margin: 0 auto !important; }
+          footer { padding: 40px 20px 24px !important; }
+          .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 1.75rem !important; }
+          #features, #why { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
         }
         @media (max-width: 640px) {
           .why-grid { grid-template-columns: 1fr !important; }
-          .stats-row { display: grid !important; grid-template-columns: 1fr !important; gap: 1.25rem !important; }
+          .stats-row { grid-template-columns: repeat(3,1fr) !important; gap: 0.75rem !important; }
+          .hero-h1 { font-size: 1.85rem !important; }
+          .hero-section p { font-size: 0.95rem !important; }
         }
         @media (max-width: 480px) {
           .footer-grid { grid-template-columns: 1fr !important; }
           footer > div:last-child { flex-direction: column; gap: 0.75rem; text-align: center; }
+          .stats-row { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
+          .cta-card { border-radius: 16px !important; }
         }
       `}</style>
     </div>
