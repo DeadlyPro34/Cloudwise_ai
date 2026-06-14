@@ -41,8 +41,13 @@ def get_api_key_status(
     return ApiKeyStatusResponse(is_configured=False, masked_key=None)
 
 
+from app.core.limiter import limiter
+from fastapi import Request
+
 @router.put("/api-key")
+@limiter.limit("5/minute")
 def update_api_key(
+    request: Request,
     payload: UpdateApiKeyRequest,
     current_user: User = Depends(get_current_user),
 ):

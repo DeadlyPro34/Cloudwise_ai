@@ -96,6 +96,7 @@ export interface DashboardSummary {
   health_score: number;
   resource_count: number;
   cost_trend: CostTrendPoint[];
+  is_connected: boolean;
 }
 
 // ------------------------------------------------------------

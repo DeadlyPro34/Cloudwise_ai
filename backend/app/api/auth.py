@@ -24,6 +24,10 @@ from app.schemas.auth import (
     UserResponse,
 )
 from app.services.auth_service import register_user, authenticate_user, AuthError
+import logging
+from datetime import datetime, timezone
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -40,7 +44,18 @@ def register(request: Request, payload: UserRegisterRequest, db: Session = Depen
             first_name=payload.first_name,
             last_name=payload.last_name,
         )
+        logger.info("Registration successful", extra={
+            "email": payload.email,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "ip": request.client.host if request.client else None,
+        })
     except AuthError as e:
+        logger.warning("Registration failed", extra={
+            "email": payload.email,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "ip": request.client.host if request.client else None,
+            "reason": str(e)
+        })
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
     access_token = create_access_token(subject=str(user.id))
@@ -53,7 +68,18 @@ def login(request: Request, payload: UserLoginRequest, db: Session = Depends(get
     """Authenticate and return an access token."""
     try:
         user = authenticate_user(db, email=payload.email, password=payload.password)
+        logger.info("Login successful", extra={
+            "email": payload.email,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "ip": request.client.host if request.client else None,
+        })
     except AuthError as e:
+        logger.warning("Login failed", extra={
+            "email": payload.email,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "ip": request.client.host if request.client else None,
+            "reason": str(e)
+        })
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
     access_token = create_access_token(subject=str(user.id))

@@ -23,6 +23,7 @@ from app.models.recommendation import Recommendation, RecommendationStatus, Prio
 from app.models.cloud_health_score import CloudHealthScore
 from app.services.auth_service import get_user_organization
 from app.services import health_score_service
+from app.core.cache import cache_manager
 
 router = APIRouter(tags=["Dashboard"])
 
@@ -67,6 +68,24 @@ def get_dashboard(
     Returns zeros / empty list when no CloudAccount is connected so
     the frontend can show its 'Connect AWS' empty state.
     """
+    org = get_user_organization(db, current_user.id)
+    if not org:
+        return {
+            "total_spend": 0,
+            "potential_savings": 0,
+            "health_score": 0,
+            "resource_count": 0,
+            "cost_trend": [],
+            "is_connected": False,
+        }
+
+    cache_key = f"org:{org.id}:dashboard"
+    if cache_manager:
+        cached = cache_manager.get(cache_key)
+        if cached:
+            logger.info("cache_hit", extra={"key": cache_key, "org_id": str(org.id)})
+            return cached
+
     account_ids = _get_account_ids(db, current_user)
     if not account_ids:
         return {
@@ -153,13 +172,9 @@ def get_dashboard(
         "is_connected": True,
     }
 
-    logger.warning(f"--- DASHBOARD PIPELINE TRACE ---")
-    logger.warning(f"User ID: {current_user.id}")
-    logger.warning(f"Account IDs found for User: {account_ids}")
-    logger.warning(f"Resources found in DB for accounts: {resource_count}")
-    logger.warning(f"Calculated Total Spend: {total_spend}")
-    logger.warning(f"Calculated Potential Savings: {potential_savings}")
-    logger.warning(f"API Payload Returning: {payload}")
+    if cache_manager:
+        cache_manager.set(cache_key, payload, expire_seconds=300)
+        logger.info("cache_set", extra={"key": cache_key, "org_id": str(org.id)})
 
     return payload
 
@@ -174,6 +189,26 @@ def get_health_score(
     current_user: User = Depends(get_current_user),
 ):
     """Return the latest Cloud Health Score breakdown."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    org = get_user_organization(db, current_user.id)
+    if not org:
+        return {
+            "score": 0,
+            "resource_efficiency": 0,
+            "cost_efficiency": 0,
+            "storage_efficiency": 0,
+            "forecast_risk": 0,
+        }
+
+    cache_key = f"org:{org.id}:health_score"
+    if cache_manager:
+        cached = cache_manager.get(cache_key)
+        if cached:
+            logger.info("cache_hit", extra={"key": cache_key, "org_id": str(org.id)})
+            return cached
+
     account_ids = _get_account_ids(db, current_user)
     if not account_ids:
         return {
@@ -191,25 +226,35 @@ def get_health_score(
     ).scalar_one_or_none()
 
     if latest:
-        return {
+        result = {
             "score": float(latest.score),
             "resource_efficiency": float(latest.resource_efficiency),
             "cost_efficiency": float(latest.cost_efficiency),
             "storage_efficiency": float(latest.storage_efficiency),
             "forecast_risk": float(latest.forecast_risk),
         }
+        if cache_manager:
+            cache_manager.set(cache_key, result, expire_seconds=600)
+            logger.info("cache_set", extra={"key": cache_key, "org_id": str(org.id)})
+        return result
 
     # Calculate on the fly if none exists yet
     try:
-        return health_score_service.calculate_health_score(db, account_ids[0])
+        result = health_score_service.calculate_health_score(db, account_ids[0])
     except Exception:
-        return {
+        result = {
             "score": 0,
             "resource_efficiency": 0,
             "cost_efficiency": 0,
             "storage_efficiency": 0,
             "forecast_risk": 0,
         }
+
+    if cache_manager:
+        cache_manager.set(cache_key, result, expire_seconds=600)
+        logger.info("cache_set", extra={"key": cache_key, "org_id": str(org.id)})
+
+    return result
 
 
 # ------------------------------------------------------------------
@@ -227,6 +272,20 @@ def get_recommendations(
     Ordered by priority (HIGH → MEDIUM → LOW) then by estimated savings
     descending, matching the frontend's expected sort order.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    org = get_user_organization(db, current_user.id)
+    if not org:
+        return []
+
+    cache_key = f"org:{org.id}:recommendations"
+    if cache_manager:
+        cached = cache_manager.get(cache_key)
+        if cached:
+            logger.info("cache_hit", extra={"key": cache_key, "org_id": str(org.id)})
+            return cached
+
     account_ids = _get_account_ids(db, current_user)
     if not account_ids:
         return []
@@ -251,7 +310,7 @@ def get_recommendations(
         .order_by(priority_order, Recommendation.estimated_monthly_savings.desc())
     ).all()
 
-    return [
+    result = [
         {
             "id": str(rec.id),
             "resource_id": aws_resource_id,          # AWS ID (i-xxx, vol-xxx)
@@ -267,3 +326,9 @@ def get_recommendations(
         }
         for rec, aws_resource_id, resource_name in rows
     ]
+
+    if cache_manager:
+        cache_manager.set(cache_key, result, expire_seconds=600)
+        logger.info("cache_set", extra={"key": cache_key, "org_id": str(org.id)})
+
+    return result

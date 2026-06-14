@@ -23,6 +23,7 @@ else:
     _engine_kwargs["pool_size"] = 10
     _engine_kwargs["max_overflow"] = 20
     _engine_kwargs["pool_pre_ping"] = True  # verify connections (handles Railway sleep/wake)
+    _engine_kwargs["pool_recycle"] = 3600
 
 engine = create_engine(settings.DATABASE_URL, **_engine_kwargs)
 

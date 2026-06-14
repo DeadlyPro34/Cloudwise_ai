@@ -11,8 +11,12 @@ from app.services.report_service import generate_report
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
+from app.core.limiter import limiter
+from fastapi import Request
+
 @router.post("/generate")
-def generate(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+@limiter.limit("5/minute")
+def generate(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # 1. Get the current user's organization
     org = get_user_organization(db, current_user.id)
     if not org:

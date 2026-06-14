@@ -44,3 +44,8 @@ reportlab==4.2.5
 # --- Utilities ---
 python-dotenv==1.0.1
 httpx==0.27.2
+
+# --- Phase 2: Observability & Caching ---
+python-json-logger==2.0.7
+redis==5.0.4
+sentry-sdk==2.0.0

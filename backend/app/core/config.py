@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "CloudWise AI"
     APP_VERSION: str = "1.0.0"
     ENVIRONMENT: str = "development"  # development | staging | production
-    DEBUG: bool = True
+    DEBUG: bool = Field(default=False, env="DEBUG")
 
     # ------------------------------------------------------------
     # Database
@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     # AWS (for demo / IAM role assumption)
     # ------------------------------------------------------------
     AWS_REGION: str = "us-east-1"
+    LOCALSTACK_URL: str = Field(default="http://localhost:4566", env="LOCALSTACK_URL")
     # Optional: for hackathon speed, allow direct access keys as fallback
     # to IAM role assumption (documented as a dev-only shortcut)
     AWS_ACCESS_KEY_ID: str | None = None
@@ -67,6 +68,13 @@ class Settings(BaseSettings):
     # python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
     # ------------------------------------------------------------
     ENCRYPTION_KEY: str = ""
+
+    # ------------------------------------------------------------
+    # Phase 2: Observability & Caching
+    # ------------------------------------------------------------
+    REDIS_URL: str = Field(default="redis://localhost:6379", env="REDIS_URL")
+    SENTRY_DSN: str | None = Field(default=None, env="SENTRY_DSN")
+    LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
 
     model_config = SettingsConfigDict(
         env_file=".env",

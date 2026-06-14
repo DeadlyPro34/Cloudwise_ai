@@ -34,6 +34,7 @@ from app.services import aws_service
 from app.services import recommendation_service
 from app.services import health_score_service
 from app.core.encryption import encrypt, decrypt
+from app.core.cache import cache_manager
 
 router = APIRouter(prefix="/aws", tags=["AWS"])
 
@@ -223,7 +224,9 @@ def connect_aws(
 # ------------------------------------------------------------------
 
 @router.delete("/disconnect")
+@limiter.limit("5/minute")
 def disconnect_aws(
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -237,6 +240,10 @@ def disconnect_aws(
     account.aws_secret_key_enc = None
     account.last_sync_at = None
     db.commit()
+
+    if cache_manager:
+        cache_manager.invalidate_org(str(account.organization_id))
+        logger.info("cache_invalidated", extra={"org_id": str(account.organization_id), "action": "disconnect_aws"})
 
     return {"message": "AWS account disconnected successfully"}
 
@@ -360,6 +367,10 @@ def scan_aws(
         account.status = CloudAccountStatus.CONNECTED
         db.commit()
         
+        if cache_manager:
+            cache_manager.invalidate_org(str(account.organization_id))
+            logger.info("cache_invalidated", extra={"org_id": str(account.organization_id), "action": "scan_aws"})
+        
         logger.info(f"Scan complete for account {account.account_id}. Resources found: {len(all_discovered)}")
 
         return {
@@ -393,6 +404,13 @@ def get_resources(
     org = get_user_organization(db, current_user.id)
     if not org:
         return []
+
+    cache_key = f"org:{org.id}:resources"
+    if cache_manager:
+        cached = cache_manager.get(cache_key)
+        if cached:
+            logger.info("cache_hit", extra={"key": cache_key, "org_id": str(org.id)})
+            return cached
 
     accounts = db.execute(
         select(CloudAccount).where(CloudAccount.organization_id == org.id)
@@ -435,5 +453,9 @@ def get_resources(
             "monthly_cost": monthly_cost,
             "account_id": account_map.get(r.cloud_account_id),
         })
+
+    if cache_manager:
+        cache_manager.set(cache_key, result, expire_seconds=900)
+        logger.info("cache_set", extra={"key": cache_key, "org_id": str(org.id)})
 
     return result
