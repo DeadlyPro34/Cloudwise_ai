@@ -49,3 +49,7 @@ Thumbs.db
 # --- Prophet/cmdstanpy artifacts ---
 cmdstan/
 *.csv.bak
+
+# --- Logs ---
+logs/
+*.log
