@@ -1,152 +1,125 @@
 # CloudWise AI
 
+## Overview
 **Autonomous FinOps Copilot for AWS Infrastructure**
 
-CloudWise AI connects to your AWS account, discovers infrastructure, analyzes costs,
-detects anomalies, forecasts spending, generates optimization recommendations, and
-explains it all in plain English via an AI Copilot.
+CloudWise AI connects to your AWS account, discovers infrastructure, analyzes costs, detects anomalies, forecasts spending, generates optimization recommendations, and explains it all in plain English via an AI Copilot. It was built as part of a 5-day hackathon sprint (June 11–15) by team **ideaforge**.
 
-> Built for a 5-day hackathon sprint (June 11–15) by team **ideaforge**.
-
----
+## Features
+- **User Authentication:** Secure JWT-based auth with Argon2 password hashing.
+- **AWS Integration:** IAM role-based AWS account connection UI with read-only access.
+- **Resource Discovery:** UI and backend integrations for AWS EC2 and EBS.
+- **Cost Analysis:** In-depth cost tracking and an overall Cloud Health Score.
+- **Recommendations Engine:** Identifies idle and unattached resources for rightsizing.
+- **Spend Forecasting:** Uses ML (Prophet) to predict future AWS costs.
+- **AI Copilot:** Groq Llama 3.3 70B API integration to answer plain-English questions about your cloud environment.
+- **Reporting:** Downloadable PDF reports for infrastructure and costs.
 
 ## Tech Stack
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query, Recharts
+- **Backend:** Python 3.11, FastAPI, SQLAlchemy 2, Alembic, Pydantic v2
+- **Database:** PostgreSQL 16 (Production) / SQLite (Local Dev Auto-Fallback)
+- **AWS & ML:** Boto3, scikit-learn (Isolation Forest), Prophet (forecasting)
+- **AI & Auth:** Groq API (Llama 3.3 70B), JWT, Argon2
+- **Tools/Deployment:** Railway (backend + DB), Vercel (frontend), Docker
 
-| Layer      | Technology |
-|------------|------------|
-| Frontend   | React 19 + TypeScript + Vite + Tailwind CSS v4 + TanStack Query + Recharts |
-| Backend    | Python 3.11 + FastAPI + SQLAlchemy 2 + Alembic + Pydantic v2 |
-| Database   | PostgreSQL 16 (Production) / SQLite (Local Dev Auto-Fallback) |
-| AWS        | Boto3 (Cost Explorer, CloudWatch, EC2, EBS) |
-| ML         | scikit-learn (Isolation Forest), Prophet (forecasting) |
-| AI         | Groq API — Llama 3.3 70B (Copilot) |
-| Auth       | JWT + Argon2 password hashing |
-| Deployment | Railway (backend + DB), Vercel (frontend) |
-
----
-
-## Project Structure
-
-```
-cloudwise-ai/
-├── frontend/          React + TypeScript app
-├── backend/           FastAPI app
-├── docs/              PRD, TRD, AFD, UI/UX Brief, Schema, Security Policy, Implementation Plan
-└── docker-compose.yml Local dev environment (Postgres + Backend)
-```
-
----
-
-## Getting Started (Local Development)
+## Installation
 
 ### Prerequisites
 - Python 3.11+
 - Node.js 22+
-- An AWS account with read-only IAM credentials (for AWS features)
-- A Groq API key (for Copilot — free at https://console.groq.com)
+- An AWS account with read-only IAM credentials
+- A Groq API key (free at https://console.groq.com)
 
----
+### Step-by-Step Setup
 
-### 1. Backend
+1. **Clone the repository**
+   ```bash
+   git clone <YOUR_REPO_URL>
+   cd cloudwise-ai
+   ```
 
-#### First-Time Setup (one-time, ~5-10 min due to ML library downloads)
+2. **Setup Backend**
+   ```bash
+   cd backend
+   cp .env.example .env
+   python -m venv venv
+   source venv/bin/activate       # macOS/Linux (use venv\Scripts\activate on Windows)
+   pip install -r requirements.txt
+   alembic upgrade head           # Run database migrations
+   ```
 
-```bash
-cd backend
-cp .env.example .env          # fill in GROQ_API_KEY for AI Copilot
+3. **Setup Frontend**
+   ```bash
+   cd ../frontend
+   cp .env.example .env
+   npm install
+   ```
 
-python -m venv venv
-# Activate the virtual environment
-source venv/bin/activate       # macOS/Linux
-# OR
-venv\Scripts\activate          # Windows
+4. **Run the project**
+   - **Backend:**
+     ```bash
+     cd backend
+     source venv/bin/activate       # macOS/Linux (use venv\Scripts\activate on Windows)
+     uvicorn app.main:app --reload --port 8000
+     ```
+   - **Frontend:**
+     ```bash
+     cd frontend
+     npm run dev
+     ```
 
-pip install -r requirements.txt   # ⏳ Downloads ~48MB of ML libs (one time only)
-
-# Run database migrations (creates SQLite db locally)
-alembic upgrade head
-```
-
-#### Every Subsequent Run (fast, no downloads — starts in seconds)
-
-```bash
-cd backend
-source venv/bin/activate       # macOS/Linux
-# OR
-venv\Scripts\activate          # Windows
-
-uvicorn app.main:app --reload --port 8000
-```
-
-> **💡 Tip:** You do NOT need to re-run `pip install` or `alembic upgrade head`
-> unless `requirements.txt` or a migration file has changed. The virtual
-> environment persists in `backend/venv/` between restarts.
-
-API docs available at `http://localhost:8000/docs`
-
----
-
-### 2. Frontend
-
-#### First-Time Setup
-
-```bash
-cd frontend
-cp .env.example .env           # set VITE_API_URL=http://localhost:8000/api/v1
-npm install
-```
-
-#### Every Subsequent Run
-
-```bash
-cd frontend
-npm run dev
-```
-
-App available at `http://localhost:5173`
-
----
-
-## How to Test
-
-1. Navigate to `http://localhost:5173` in your browser.
+## Usage
+1. Open your browser and navigate to `http://localhost:5173`.
 2. Sign up for a new account.
-3. You will be taken to the Onboarding Wizard. Click **Connect AWS Account**.
-4. The dashboard will populate with mock KPI metrics (Spend, Savings, Health Score) and a cost trend chart.
-5. Visit the **Resources** and **Recommendations** pages to view rightsizing intelligence.
-6. Visit the **AI Copilot** page and ask questions about your cloud environment.
+3. In the Onboarding Wizard, click **Connect AWS Account** and provide your read-only IAM credentials.
+4. The dashboard will populate with mock KPI metrics (Spend, Savings, Health Score) and cost trend charts.
+5. Explore the **Resources** and **Recommendations** pages to view rightsizing intelligence.
+6. Visit the **AI Copilot** page and ask questions about your cloud infrastructure.
 
----
+## Project Structure
+```text
+cloudwise-ai/
+├── backend/               # FastAPI application, models, and ML scripts
+├── frontend/              # React + TypeScript user interface
+├── docs/                  # Project documentation (PRD, TRD, Schema, etc.)
+├── docker-compose.yml     # Local dev environment (Postgres + Backend)
+└── README.md              # Project documentation
+```
 
-## Core Features (MVP)
+## API
+Interactive API documentation is automatically generated by FastAPI. Once the backend is running, you can access it at:
+- **Swagger UI:** `http://localhost:8000/docs`
+- **ReDoc:** `http://localhost:8000/redoc`
 
-- ✅ User authentication (JWT, Argon2)
-- ✅ AWS account connection UI (IAM role-based)
-- ✅ Resource discovery UI & Backend integrations (EC2, EBS)
-- ✅ Cost analysis & Cloud Health Score
-- ✅ Recommendation engine (idle/unattached resource detection)
-- ✅ Spend forecasting (Prophet)
-- ✅ AI Copilot (Groq Llama API integration)
-- ✅ Downloadable PDF reports
+Important endpoints include:
+- `POST /api/v1/auth/register` - Register a new user
+- `POST /api/v1/auth/login` - Authenticate and receive JWT
+- `GET /api/v1/aws/resources` - Fetch discovered AWS resources
+- `POST /api/v1/copilot/chat` - Interact with the AI Copilot
 
----
+## Configuration
+Ensure the following environment variables are correctly set:
 
-## Security
+**Backend (`backend/.env`):**
+- `GROQ_API_KEY`: Your Groq API key for the AI Copilot.
+- `DATABASE_URL`: Connection string for Postgres (uses SQLite if omitted).
 
-See [Security Policy](./docs/Security_Policy_v1.0.md). Key practices:
-- Passwords hashed with Argon2, never stored in plaintext
-- JWT-based authentication
-- AWS credentials encrypted at rest using Fernet symmetric encryption
-- AWS access via read-only IAM roles only — no long-term credentials stored
-- Rate limiting on auth and AI endpoints
-- Security headers (HSTS, CSP, X-Frame-Options, etc.)
+**Frontend (`frontend/.env`):**
+- `VITE_API_URL`: Backend API URL (e.g., `http://localhost:8000/api/v1`).
 
-> **Note:** JWT tokens are stored in localStorage for development simplicity.
-> A production deployment should use httpOnly cookies as described
-> in the Security Policy document.
+## Future Improvements
+- Multi-cloud support (Azure, Google Cloud Platform)
+- One-click remediation for applying cost-saving recommendations directly
+- Webhook integrations for Slack/Teams alerts on spending anomalies
+- Enhanced Dockerized deployment workflow for production
 
----
+## Contributing
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
-
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.
