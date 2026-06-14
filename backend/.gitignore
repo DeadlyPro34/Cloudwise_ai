@@ -29,10 +29,13 @@ env/
 .coverage
 htmlcov/
 
-# --- Alembic ---
-# (keep versions/ tracked, but ignore local sqlite test DBs)
+# --- Alembic / SQLite ---
+# Keep versions/ tracked, but ignore ALL local SQLite DB files.
+# Teammates should run: alembic upgrade head  (creates their own DB)
 *.sqlite3
 *.db
+*.db-shm
+*.db-wal
 
 # --- IDE ---
 .vscode/
