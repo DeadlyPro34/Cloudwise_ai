@@ -1,44 +1,106 @@
-# ============================================================
-# CloudWise AI - Local Development Docker Compose
-# Spins up PostgreSQL + Backend for local testing.
-# Frontend run separately via `npm run dev` (Vite).
-# ============================================================
+# docker-compose.yml - Complete Phase 2 Setup
+
+version: '3.8'
 
 services:
+  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: cloudwise-postgres
-    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: cloudwise_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cloudwise_password}
       POSTGRES_DB: cloudwise
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U cloudwise_user"]
+      interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - cloudwise-network
 
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: cloudwise-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_password}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cloudwise-network
+
+  # FastAPI Backend
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
     container_name: cloudwise-backend
-    restart: unless-stopped
-    env_file:
-      - ./backend/.env
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/cloudwise
+      # Phase 1
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-False}
+      DATABASE_URL: postgresql://cloudwise_user:${DB_PASSWORD:-cloudwise_password}@postgres:5432/cloudwise
+      JWT_SECRET: ${JWT_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      
+      # Phase 2
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOCALSTACK_URL: http://host.docker.internal:4566
+      
+      # CORS
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
     ports:
       - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
-      - ./backend:/app
+      - ./backend/logs:/app/logs
+      - ./backend/app:/app/app
+    networks:
+      - cloudwise-network
+    restart: unless-stopped
+
+  # Frontend (Vite Dev Server)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cloudwise-frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000/api/v1}
+    ports:
+      - "5173:80"
+    volumes:
+      - ./frontend/src:/app/src
+    networks:
+      - cloudwise-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  localstack_data:
+    driver: local
+
+networks:
+  cloudwise-network:
+    driver: bridge
