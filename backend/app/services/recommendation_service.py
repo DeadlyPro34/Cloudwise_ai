@@ -13,6 +13,7 @@ from sqlalchemy import select, func
 
 from app.models.resource_inventory import ResourceInventory, ResourceType, ResourceStatus
 from app.models.resource_metric import ResourceMetric
+from app.models.resource_cost import ResourceCost
 from app.models.recommendation import (
     Recommendation,
     RecommendationType,
@@ -63,10 +64,33 @@ def analyze_idle_ec2(db: Session, cloud_account_id: uuid.UUID) -> list[Recommend
         if avg_cpu >= 5.0:
             continue
 
-        # Estimate monthly cost from metadata
+        # Estimate monthly cost from actual cost data or fallback
+        avg_daily_cost_raw = db.execute(
+            select(func.avg(ResourceCost.daily_cost)).where(
+                ResourceCost.resource_id == resource.id,
+            )
+        ).scalar()
+
         monthly_cost = 0.0
-        if resource.metadata_json and "monthly_cost" in resource.metadata_json:
-            monthly_cost = float(resource.metadata_json["monthly_cost"])
+        if avg_daily_cost_raw is not None and float(avg_daily_cost_raw) > 0:
+            monthly_cost = float(avg_daily_cost_raw) * 30
+        else:
+            # Fallback to instance type lookup
+            instance_type = "unknown"
+            if resource.metadata_json and "instance_type" in resource.metadata_json:
+                instance_type = resource.metadata_json["instance_type"]
+            
+            # Simple fallback dict
+            fallback_costs = {
+                "t2.micro": 8.00,
+                "t3.micro": 8.00,
+                "t3.medium": 30.00,
+                "t3.large": 60.00,
+                "m5.large": 70.00,
+                "m5.xlarge": 140.00,
+                "c5.large": 60.00,
+            }
+            monthly_cost = fallback_costs.get(instance_type, 30.00) # default to $30 if unknown
 
         if avg_cpu < 1.0:
             rec_type = RecommendationType.DELETE_RESOURCE
@@ -138,10 +162,21 @@ def analyze_unattached_ebs(
         if existing:
             continue
 
-        size_gb = 0
-        if resource.metadata_json and "size_gb" in resource.metadata_json:
-            size_gb = resource.metadata_json["size_gb"]
-        estimated_savings = float(size_gb) * 0.10  # ~$0.10/GB/month for gp2
+        # Calculate savings from actual costs or fallback
+        avg_daily_cost_raw = db.execute(
+            select(func.avg(ResourceCost.daily_cost)).where(
+                ResourceCost.resource_id == resource.id,
+            )
+        ).scalar()
+
+        estimated_savings = 0.0
+        if avg_daily_cost_raw is not None and float(avg_daily_cost_raw) > 0:
+            estimated_savings = float(avg_daily_cost_raw) * 30
+        else:
+            size_gb = 0
+            if resource.metadata_json and "size_gb" in resource.metadata_json:
+                size_gb = resource.metadata_json["size_gb"]
+            estimated_savings = float(size_gb) * 0.10  # ~$0.10/GB/month for gp2
 
         rec = Recommendation(
             resource_id=resource.id,
