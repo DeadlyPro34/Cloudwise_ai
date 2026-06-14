@@ -12,12 +12,16 @@ Design decisions (hackathon MVP):
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 import uuid
+import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+logger = logging.getLogger(__name__)
+
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.core.limiter import limiter
 from app.core.deps import get_current_user
 from app.models.user import User
 from app.models.cloud_account import CloudAccount, CloudProvider, CloudAccountStatus
@@ -115,6 +119,7 @@ def _store_cost_data(
         for rtype, total_cost in type_costs.items():
             targets = resources_by_type.get(rtype, [])
             if not targets:
+                logger.warning("No resources found for type %s", rtype.value)
                 continue
             per_resource = total_cost / len(targets)
             for inv_id in targets:
@@ -143,7 +148,9 @@ def _store_cost_data(
 # ------------------------------------------------------------------
 
 @router.post("/connect")
+@limiter.limit("5/minute")
 def connect_aws(
+    request: Request,
     payload: AWSConnectRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -198,6 +205,8 @@ def connect_aws(
     db.commit()
     db.refresh(account)
 
+    logger.info(f"User {current_user.id} connected AWS account {account.account_id}")
+
     return {
         "account_id": account.account_id,
         "account_name": account.account_name,
@@ -233,7 +242,9 @@ def disconnect_aws(
 # ------------------------------------------------------------------
 
 @router.post("/scan")
+@limiter.limit("5/minute")
 def scan_aws(
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -248,7 +259,15 @@ def scan_aws(
     if not account.aws_access_key_enc or not account.aws_secret_key_enc:
         raise HTTPException(status_code=400, detail="AWS credentials not available. Please reconnect your account.")
 
+    if account.status == CloudAccountStatus.SYNCING:
+        raise HTTPException(status_code=400, detail="Scan already in progress")
+
+    account.status = CloudAccountStatus.SYNCING
+    db.commit()
+
     region = account.region or "us-east-1"
+    
+    logger.info(f"User {current_user.id} starting scan for account {account.account_id}")
 
     try:
         # Re-establish boto3 session via STS validation
@@ -334,7 +353,10 @@ def scan_aws(
 
         # Update sync timestamp
         account.last_sync_at = datetime.now(timezone.utc)
+        account.status = CloudAccountStatus.CONNECTED
         db.commit()
+        
+        logger.info(f"Scan complete for account {account.account_id}. Resources found: {len(all_discovered)}")
 
         return {
             "ec2_count": len(ec2_resources),
@@ -346,7 +368,12 @@ def scan_aws(
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Scan failed for account {account.account_id}: {str(e)}")
         _raise_aws_error(e)
+    finally:
+        if account.status == CloudAccountStatus.SYNCING:
+            account.status = CloudAccountStatus.ERROR
+            db.commit()
 
 
 # ------------------------------------------------------------------
