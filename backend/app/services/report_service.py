@@ -8,6 +8,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 
 from app.models.cloud_account import CloudAccount
 from app.models.resource_inventory import ResourceInventory
@@ -24,7 +25,9 @@ def generate_report(db: Session, cloud_account_id: uuid.UUID | None) -> bytes:
 
     # Title
     elements.append(Paragraph("CloudWise AI — Cloud Optimization Report", styles['Title']))
-    elements.append(Paragraph(f"Date: {date.today().isoformat()}", styles['Normal']))
+    
+    formatted_date = date.today().strftime("%B %d, %Y")
+    elements.append(Paragraph(f"Date: {formatted_date}", styles['Normal']))
     elements.append(Spacer(1, 20))
 
     if not cloud_account_id:
@@ -38,6 +41,17 @@ def generate_report(db: Session, cloud_account_id: uuid.UUID | None) -> bytes:
         elements.append(Paragraph("AWS Account not found.", styles['Heading2']))
         doc.build(elements)
         return buffer.getvalue()
+        
+    acc_name = account.account_name or "Unknown Account"
+    acc_id = account.account_id or "Unknown ID"
+    elements.append(Paragraph(f"Account: {acc_name} ({acc_id})", styles['Heading3']))
+    elements.append(Spacer(1, 20))
+
+    def add_header(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Helvetica', 9)
+        canvas.drawString(inch, 10.5 * inch, f"Account: {acc_name}")
+        canvas.restoreState()
 
     # Executive Summary
     elements.append(Paragraph("Executive Summary", styles['Heading2']))
@@ -161,5 +175,5 @@ def generate_report(db: Session, cloud_account_id: uuid.UUID | None) -> bytes:
     else:
         elements.append(Paragraph("Insufficient data for forecasts.", styles['Normal']))
 
-    doc.build(elements)
+    doc.build(elements, onFirstPage=add_header, onLaterPages=add_header)
     return buffer.getvalue()
