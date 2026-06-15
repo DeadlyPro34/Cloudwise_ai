@@ -15,7 +15,7 @@
 ---
 
 ## 2. Overview
-CloudWise AI is an autonomous FinOps Copilot designed to tackle cloud infrastructure waste. It connects securely to your AWS account to discover active infrastructure, analyze costs, detect anomalies, forecast spending, and generate actionable optimization recommendations. It simplifies cloud billing complexities by explaining them in plain English via a built-in AI Copilot.
+CloudWise AI is an autonomous FinOps Copilot designed to tackle cloud infrastructure waste. Powered by the computational intelligence of **Wolfram Alpha** and advanced LLMs, it connects securely to your AWS account to discover active infrastructure, analyze costs, detect anomalies, forecast spending, and generate actionable optimization recommendations. It simplifies cloud billing complexities by explaining them in plain English via a built-in AI Copilot.
 
 **Problem it solves:** Engineering teams often overspend on cloud resources due to lack of visibility, unattached EBS volumes, idle EC2 instances, and difficult-to-understand billing dashboards. CloudWise AI acts as an intelligent watchdog that translates dense cloud billing data into actionable, money-saving insights.
 
@@ -27,6 +27,7 @@ CloudWise AI is an autonomous FinOps Copilot designed to tackle cloud infrastruc
 - **Cost Analysis Dashboard:** In-depth cost tracking, anomaly detection, and an overall Cloud Health Score.
 - **Recommendations Engine:** Identifies idle compute and unattached storage to provide actionable rightsizing advice.
 - **Spend Forecasting:** Predicts future AWS costs using machine learning models.
+- **Wolfram Alpha Intelligence:** Leverages Wolfram Alpha for advanced mathematical modeling and precise cost computations.
 - **Cloud Simulator:** See how much money you would save by dropping a specific resource in real-time.
 - **AI Copilot:** An intelligent chatbot powered by Llama 3.3 70B (via Groq) to answer plain-English questions about your cloud environment and billing.
 - **Exportable Reports:** Download detailed PDF reports summarizing infrastructure and costs.
@@ -58,7 +59,7 @@ CloudWise AI is an autonomous FinOps Copilot designed to tackle cloud infrastruc
 - **Frontend:** React 19, TypeScript, Vite, React Router, Recharts, Lucide React
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy 2, Pydantic v2
 - **Database:** PostgreSQL 16
-- **Machine Learning & Integrations:** Prophet (forecasting), Boto3 (AWS SDK), Groq API (Llama 3.3 70B)
+- **Machine Learning & Integrations:** Wolfram Alpha API (computation/data analysis), Prophet (forecasting), Boto3 (AWS SDK), Groq API (Llama 3.3 70B)
 - **Deployment:** Docker, Render
 
 ## 6. Installation
