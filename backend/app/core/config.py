@@ -72,7 +72,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------
     # Phase 2: Observability & Caching
     # ------------------------------------------------------------
-    REDIS_URL: str = Field(default="redis://localhost:6379", env="REDIS_URL")
+    REDIS_URL: str | None = Field(default=None, env="REDIS_URL")
     SENTRY_DSN: str | None = Field(default=None, env="SENTRY_DSN")
     LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
 
