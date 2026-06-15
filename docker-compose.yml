@@ -1,5 +1,3 @@
-# docker-compose.yml - Complete Phase 2 Setup
-
 version: '3.8'
 
 services:
@@ -10,13 +8,13 @@ services:
     environment:
       POSTGRES_USER: cloudwise_user
       POSTGRES_PASSWORD: ${DB_PASSWORD:-cloudwise_password}
-      POSTGRES_DB: cloudwise
+      POSTGRES_DB: cloudwise_user
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cloudwise_user"]
+      test: ["CMD-SHELL", "pg_isready -U cloudwise_user -d cloudwise_user"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,10 +31,25 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_password}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - cloudwise-network
+
+  # LocalStack (Mock AWS Ecosystem)
+  localstack:
+    image: localstack/localstack:3.4.0
+    container_name: cloudwise-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - DEBUG=1
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend/localstack/init:/etc/localstack/init/ready.d
     networks:
       - cloudwise-network
 
@@ -50,7 +63,7 @@ services:
       # Phase 1
       ENVIRONMENT: ${ENVIRONMENT:-development}
       DEBUG: ${DEBUG:-False}
-      DATABASE_URL: postgresql://cloudwise_user:${DB_PASSWORD:-cloudwise_password}@postgres:5432/cloudwise
+      DATABASE_URL: postgresql://cloudwise_user:${DB_PASSWORD:-cloudwise_password}@postgres:5432/cloudwise_user
       JWT_SECRET: ${JWT_SECRET}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       GROQ_API_KEY: ${GROQ_API_KEY}
@@ -59,7 +72,7 @@ services:
       REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379
       SENTRY_DSN: ${SENTRY_DSN:-}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
-      LOCALSTACK_URL: http://host.docker.internal:4566
+      LOCALSTACK_URL: http://localstack:4566
       
       # CORS
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
@@ -70,6 +83,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      localstack:
+        condition: service_started
     volumes:
       - ./backend/logs:/app/logs
       - ./backend/app:/app/app
