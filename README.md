@@ -2,7 +2,7 @@
 
 **Team Name:** ideaforge  
 **Team Members:** 
-- Krisha Prakashkumar Kalal
+- Krisha Prakashkumar Kalal ([@krisha-kalal](https://github.com/krisha-kalal))
 - Akhil Biju Varghese ([@DeadlyPro34](https://github.com/DeadlyPro34))
 
 **Live Demo:** [https://cloudwise-frontend.onrender.com](https://cloudwise-frontend.onrender.com)
@@ -63,11 +63,12 @@ CloudWise AI is an autonomous FinOps Copilot designed to tackle cloud infrastruc
 
 ## 6. Installation
 
-Follow these steps to run CloudWise AI locally on your machine.
+The easiest way to run the entire application stack locally (including the database and LocalStack for AWS mocking) is using **Docker**. Alternatively, you can run the services manually.
 
 ### Prerequisites
 - Node.js 22+
 - Python 3.12+
+- Docker & Docker Desktop (Required for LocalStack & local PostgreSQL)
 - Groq API Key (Available for free at [console.groq.com](https://console.groq.com/))
 
 ### Clone the repository
@@ -75,6 +76,23 @@ Follow these steps to run CloudWise AI locally on your machine.
 git clone https://github.com/DeadlyPro34/Cloudwise_ai.git
 cd Cloudwise_ai
 ```
+
+### Docker & LocalStack Setup (Recommended)
+LocalStack allows you to mock AWS services locally without incurring any costs.
+```bash
+# Start all services (Frontend, Backend, PostgreSQL, and LocalStack)
+docker-compose up -d --build
+
+# To check if LocalStack is running properly on port 4566:
+curl http://localhost:4566/_localstack/health
+```
+Once running via Docker, you can access the app at `http://localhost:5173`. 
+*(Note: When connecting your AWS account in the UI, make sure to check the "Use LocalStack" box!)*
+
+---
+
+### Manual Setup (Without Docker)
+If you prefer to run the frontend and backend manually for development:
 
 ### Set up Environment Variables
 **Backend Configuration:**
