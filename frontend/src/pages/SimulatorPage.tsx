@@ -239,12 +239,22 @@ export function SimulatorPage() {
               </div>
 
               <div className="pt-6 border-t border-white/10">
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-widest mb-3">
-                  Wolfram Verification
-                </p>
-                <div className="bg-[#1e1e1e] rounded-lg p-4 font-mono text-sm text-[#d4d4d4] border border-[#333] shadow-inner overflow-x-auto whitespace-pre-wrap">
-                  {result.wolfram_verification}
-                </div>
+                {result.wolfram_verification && !result.wolfram_verification.includes("unavailable") && (
+                  <div className="bg-[#1e1e1e] rounded-lg p-4 font-mono text-sm border border-[#333] shadow-inner overflow-x-auto whitespace-pre-wrap">
+                    <p className="caption text-text-muted mb-2">
+                      📊 Wolfram Computational Intelligence
+                    </p>
+                    <p className="text-(--color-success) font-medium">
+                      {result.wolfram_verification}
+                    </p>
+                  </div>
+                )}
+                
+                {result.wolfram_verification && result.wolfram_verification.includes("unavailable") && (
+                  <p className="caption text-center mt-2 text-text-muted">
+                    Add WOLFRAM_APP_ID to enable computational verification
+                  </p>
+                )}
               </div>
             </div>
           ) : (

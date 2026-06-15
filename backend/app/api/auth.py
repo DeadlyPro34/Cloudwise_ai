@@ -22,8 +22,15 @@ from app.schemas.auth import (
     UserLoginRequest,
     TokenResponse,
     UserResponse,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    MessageResponse,
 )
 from app.services.auth_service import register_user, authenticate_user, AuthError
+import secrets
+from datetime import timedelta
+from sqlalchemy import select
+from app.core.security import hash_password
 import logging
 from datetime import datetime, timezone
 
@@ -90,3 +97,39 @@ def login(request: Request, payload: UserLoginRequest, db: Session = Depends(get
 def get_me(current_user: User = Depends(get_current_user)):
     """Return the currently authenticated user's profile."""
     return UserResponse.model_validate(current_user)
+
+@router.post("/forgot-password")
+def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.execute(select(User).where(User.email == payload.email)).scalar_one_or_none()
+    
+    token = secrets.token_urlsafe(32)
+    message = "Password reset initiated"
+    note = "In production this token would be emailed. Use this token to reset your password."
+    
+    if user:
+        user.reset_token = token
+        user.reset_token_expires = datetime.now(timezone.utc) + timedelta(hours=1)
+        db.commit()
+        
+    return {"message": message, "reset_token": token, "note": note}
+
+@router.post("/reset-password")
+def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.execute(select(User).where(User.reset_token == payload.token)).scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        
+    if user.reset_token_expires:
+        expires = user.reset_token_expires
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=timezone.utc)
+        if expires < datetime.now(timezone.utc):
+            raise HTTPException(status_code=400, detail="Reset token has expired. Please request a new one.")
+        
+    user.password_hash = hash_password(payload.new_password)
+    user.reset_token = None
+    user.reset_token_expires = None
+    db.commit()
+    
+    return {"message": "Password reset successfully. You can now log in."}
