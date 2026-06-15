@@ -99,7 +99,7 @@ export function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden w-full box-border">
+    <div className="min-h-screen flex flex-col px-4 py-2 sm:py-6 relative overflow-hidden w-full box-border">
       {/* Ambient glow */}
       <div
         className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"
@@ -108,17 +108,21 @@ export function OnboardingPage() {
         }}
       />
 
-      {/* Back button */}
-      <button 
-        onClick={() => navigate('/dashboard')}
-        className="absolute top-12 sm:top-8 left-4 sm:left-8 flex items-center gap-2 text-sm font-medium transition-colors hover:text-(--color-text-primary) z-20"
-        style={{ color: "var(--color-text-secondary)" }}
-      >
-        <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-      </button>
+      {/* Top Nav Container */}
+      <div className="w-full max-w-xl mx-auto pt-[20px] pb-[12px] z-20 relative">
+        <button 
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-(--color-text-primary)"
+          style={{ color: "var(--color-text-secondary)" }}
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+        </button>
+      </div>
 
-      {/* Step indicator */}
-      <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8 relative z-10 w-full max-w-sm mx-auto">
+      {/* Main Content Wrapper (Centered) */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full pb-8">
+        {/* Step indicator */}
+        <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8 relative z-10 w-full max-w-sm mx-auto">
         {STEPS.map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <div className="flex flex-col items-center gap-1.5">
@@ -452,6 +456,7 @@ export function OnboardingPage() {
             ) : null}
           </div>
         )}
+      </div>
       </div>
 
       {/* Inline keyframes */}
