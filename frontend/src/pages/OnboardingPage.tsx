@@ -99,7 +99,7 @@ export function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden w-full box-border">
       {/* Ambient glow */}
       <div
         className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"
@@ -118,7 +118,7 @@ export function OnboardingPage() {
       </button>
 
       {/* Step indicator */}
-      <div className="flex items-center gap-2 mb-8 relative z-10">
+      <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8 relative z-10 w-full max-w-sm mx-auto">
         {STEPS.map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <div className="flex flex-col items-center gap-1.5">
@@ -152,7 +152,7 @@ export function OnboardingPage() {
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className="w-16 h-0.5 mb-5 transition-colors duration-500"
+                className="w-8 sm:w-16 h-0.5 mb-5 transition-colors duration-500"
                 style={{
                   backgroundColor:
                     i < step ? "var(--color-success)" : "var(--color-surface)",
@@ -164,7 +164,7 @@ export function OnboardingPage() {
       </div>
 
       {/* Step content */}
-      <div className="card w-full max-w-xl relative z-10" style={{ transition: "all 0.3s ease" }}>
+      <div className="card w-full max-w-xl relative z-10 mx-auto" style={{ transition: "all 0.3s ease" }}>
         {/* Step 0: Welcome */}
         {step === 0 && (
           <div className="text-center animate-[fadeIn_0.5s_ease]">
@@ -185,7 +185,7 @@ export function OnboardingPage() {
               using AI-powered recommendations. Let's get your account connected in just a
               few minutes.
             </p>
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="flex sm:grid sm:grid-cols-3 gap-3 sm:gap-4 mb-8 overflow-x-auto pb-4 snap-x hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
               {[
                 { icon: Server, label: "Resource Analysis", desc: "Scan EC2 & EBS" },
                 { icon: Shield, label: "AI Insights", desc: "Smart Recommendations" },
@@ -193,12 +193,12 @@ export function OnboardingPage() {
               ].map(({ icon: Icon, label, desc }) => (
                 <div
                   key={label}
-                  className="p-4 rounded-xl transition-all duration-200 hover:scale-105"
+                  className="p-4 rounded-xl transition-all duration-200 hover:scale-105 min-w-[140px] flex-1 flex-shrink-0 snap-center flex flex-col items-center justify-center text-center"
                   style={{ backgroundColor: "var(--color-surface)" }}
                 >
-                  <Icon className="w-6 h-6 mb-2 mx-auto" style={{ color: "var(--color-accent-hover)" }} />
-                  <p className="text-sm font-medium">{label}</p>
-                  <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>{desc}</p>
+                  <Icon className="w-6 h-6 mb-2" style={{ color: "var(--color-accent-hover)" }} />
+                  <p className="text-sm font-medium w-full">{label}</p>
+                  <p className="text-xs w-full mt-1" style={{ color: "var(--color-text-secondary)" }}>{desc}</p>
                 </div>
               ))}
             </div>
