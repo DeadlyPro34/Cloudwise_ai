@@ -75,16 +75,14 @@ def simulate_cost_impact(
     wolfram_answer = "Wolfram verification unavailable"
     if settings.WOLFRAM_APP_ID:
         try:
-            query = (
-                f"calculate {monthly_savings:.2f} dollars monthly savings "
-                f"over 12 months with {payload.traffic_growth_percent}% "
-                f"traffic growth adjustment"
-            )
+            query = f"{monthly_savings:.2f} * 12"
             url = "https://api.wolframalpha.com/v1/result"
             params = {"appid": settings.WOLFRAM_APP_ID, "i": query}
             resp = httpx.get(url, params=params, timeout=5)
             if resp.status_code == 200:
-                wolfram_answer = resp.text
+                wolfram_answer = f"Annual savings: ${annual_savings:.2f} (Wolfram: {resp.text})"
+            else:
+                wolfram_answer = f"Annual savings: ${annual_savings:.2f}"
         except Exception:
             wolfram_answer = f"Annual savings: ${annual_savings:.2f}"
 

@@ -19,6 +19,12 @@ Set these in Render Dashboard → Your Service → Environment before deploying.
 | GROQ_MODEL | llama-3.3-70b-versatile |
 | AWS_REGION | us-east-1 (or your preferred region) |
 
+## Optional (features disabled if not set)
+
+| Variable | Value |
+|---|---|
+| WOLFRAM_APP_ID | Get free key at products.wolframalpha.com/api |
+
 ## Do NOT set on Render (local dev only)
 
 - DEBUG=true (leave unset, defaults to false in production)
