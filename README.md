@@ -2,7 +2,7 @@
 
 **Team Name:** ideaforge  
 **Team Members:** 
-- Akhil Biju Varghese ([@DeadlyPro34](https://github.com/DeadlyPro34))
+- Akhil Biju Varghese ([@DeadlyPro34](https://github.com/DeadlyPro34) | [ORCID](https://orcid.org/0009-0003-1168-3871))
 - Krisha Prakashkumar Kalal ([@krisha-kalal](https://github.com/krisha-kalal))
 
 **Live Demo:** [https://cloudwise-frontend.onrender.com](https://cloudwise-frontend.onrender.com)
