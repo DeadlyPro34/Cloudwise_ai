@@ -59,7 +59,7 @@ CloudWise AI is an autonomous FinOps Copilot designed to tackle cloud infrastruc
 - **Frontend:** React 19, TypeScript, Vite, React Router, Recharts, Lucide React
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy 2, Pydantic v2
 - **Database:** PostgreSQL 16
-- **Machine Learning & Integrations:** Wolfram Alpha API (computation/data analysis), Prophet (forecasting), Boto3 (AWS SDK), Groq API (Llama 3.3 70B)
+- **AI Models & Tools Used:** Wolfram Alpha API (computation/data analysis), Prophet (forecasting), Boto3 (AWS SDK), Groq API (Llama 3.3 70B)
 - **Deployment:** Docker, Render
 
 ## 6. Installation
