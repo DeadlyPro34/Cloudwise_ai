@@ -2,8 +2,8 @@
 
 **Team Name:** ideaforge  
 **Team Members:** 
-- Krisha Prakashkumar Kalal ([@krisha-kalal](https://github.com/krisha-kalal))
 - Akhil Biju Varghese ([@DeadlyPro34](https://github.com/DeadlyPro34))
+- Krisha Prakashkumar Kalal ([@krisha-kalal](https://github.com/krisha-kalal))
 
 **Live Demo:** [https://cloudwise-frontend.onrender.com](https://cloudwise-frontend.onrender.com)
 
