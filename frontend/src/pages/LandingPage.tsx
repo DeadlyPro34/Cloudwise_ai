@@ -377,24 +377,20 @@ export function LandingPage() {
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)", backgroundSize: "64px 64px" }} />
 
       {/* HEADER */}
-      <div className="sticky top-0 z-50 pt-[1.2rem] px-[1.2rem]">
-        <header
-          style={{
-            background: "rgba(20, 20, 25, 0.35)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "100px",
-            maxWidth: "1200px",
-            margin: "0 auto",
-            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
-          }}
+      <header
+        className="sticky top-0 z-50"
+        style={{
+          background: "rgba(5,5,8,0.85)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        {/* Header row */}
+        <div
+          className="header-inner"
+          style={{ height: 64, padding: "0 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1200, margin: "0 auto", width: "100%" }}
         >
-          {/* Header row */}
-          <div
-            className="header-inner"
-            style={{ height: 64, padding: "0 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}
-          >
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
             <div className="w-[40px] h-[40px] rounded-lg shrink-0 flex items-center justify-center bg-transparent">
@@ -441,36 +437,27 @@ export function LandingPage() {
           </div>
         </div>
 
-          {/* Mobile dropdown */}
-          {mobileMenuOpen && (
-            <nav
-              style={{
-                position: "absolute",
-                top: 74,
-                left: "1rem",
-                right: "1rem",
-                width: "calc(100% - 2rem)",
-                background: "rgba(20, 20, 25, 0.95)",
-                backdropFilter: "blur(24px)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: "24px",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.6)",
-                display: "flex",
-                flexDirection: "column",
-                padding: "1.5rem",
-                gap: "1.2rem",
-              }}
-            >
-              <NavAnchor label="Features" href="#features" isActive={activeSection === "features"} onClick={(e) => scrollTo(e, "features")} />
-              <NavAnchor label="Why Us"   href="#why"      isActive={activeSection === "why"}      onClick={(e) => scrollTo(e, "why")} />
-              <NavAnchor label="Docs"     href="#docs"     badge="new" isActive={activeSection === "docs"} onClick={(e) => scrollTo(e, "docs")} />
-              <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "0.25rem 0" }} />
-              <Link to="/login"  style={{ color: "#8B93B5", textDecoration: "none", fontSize: "0.95rem", padding: "0.25rem 0" }}>Log In</Link>
-              <Link to="/signup" style={{ color: "#fff", textDecoration: "none", fontSize: "0.95rem", background: "linear-gradient(135deg,#5B52F0,#7B75FF)", padding: "0.65rem 1rem", borderRadius: 8, textAlign: "center", fontWeight: 600 }}>Get Started</Link>
-            </nav>
-          )}
-        </header>
-      </div>
+        {/* Mobile dropdown */}
+        {mobileMenuOpen && (
+          <nav
+            style={{
+              borderTop: "1px solid rgba(255,255,255,0.07)",
+              background: "rgba(5,5,8,0.98)",
+              padding: "1rem 1.5rem 1.5rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem",
+            }}
+          >
+            <NavAnchor label="Features" href="#features" isActive={activeSection === "features"} onClick={(e) => scrollTo(e, "features")} />
+            <NavAnchor label="Why Us"   href="#why"      isActive={activeSection === "why"}      onClick={(e) => scrollTo(e, "why")} />
+            <NavAnchor label="Docs"     href="#docs"     badge="new" isActive={activeSection === "docs"} onClick={(e) => scrollTo(e, "docs")} />
+            <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "0.25rem 0" }} />
+            <Link to="/login"  style={{ color: "#8B93B5", textDecoration: "none", fontSize: "0.95rem", padding: "0.25rem 0" }}>Log In</Link>
+            <Link to="/signup" style={{ color: "#fff", textDecoration: "none", fontSize: "0.95rem", background: "linear-gradient(135deg,#5B52F0,#7B75FF)", padding: "0.65rem 1rem", borderRadius: 8, textAlign: "center", fontWeight: 600 }}>Get Started</Link>
+          </nav>
+        )}
+      </header>
 
       {/* HERO */}
       <section
