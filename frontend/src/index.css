@@ -45,6 +45,16 @@
    BASE
    ============================================================ */
 @layer base {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
   html {
     color-scheme: dark;
     font-size: 17px; /* slightly larger base */
@@ -57,7 +67,6 @@
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
     line-height: 1.6;
   }
 
