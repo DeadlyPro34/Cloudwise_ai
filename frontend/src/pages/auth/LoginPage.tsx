@@ -53,8 +53,8 @@ export function LoginPage() {
 
         {/* Logo */}
         <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,#5B52F0,#7B75FF)", boxShadow: "0 4px 20px rgba(91,82,240,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Zap className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-transparent">
+            <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-cover" />
           </div>
           <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "#EEF2FF", fontFamily: "var(--font-sans)" }}>CloudWise AI</span>
         </div>
@@ -117,8 +117,8 @@ export function LoginPage() {
             className="show-mobile"
             style={{ display: "none", alignItems: "center", gap: "0.5rem", marginBottom: "2rem" }}
           >
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,#5B52F0,#7B75FF)", boxShadow: "0 4px 16px rgba(91,82,240,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Zap className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-transparent">
+              <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-cover" />
             </div>
             <span style={{ fontSize: "1rem", fontWeight: 600, color: "#EEF2FF" }}>CloudWise AI</span>
           </div>

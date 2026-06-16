@@ -47,14 +47,8 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       >
         {/* Logo + close (mobile) */}
         <div className="flex items-center gap-2.5 px-3 py-2 mb-7">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-            style={{
-              background: "linear-gradient(135deg, #5B52F0, #7B75FF)",
-              boxShadow: "0 4px 16px rgba(91,82,240,0.4)",
-            }}
-          >
-            <Zap className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-transparent">
+            <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-cover" />
           </div>
           <span
             className="text-[1rem] font-semibold tracking-tight flex-1"

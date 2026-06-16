@@ -108,20 +108,8 @@ function Navbar() {
           to="/"
           style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.65rem", flexShrink: 0 }}
         >
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 10,
-              background: "linear-gradient(135deg,#5B52F0,#7B75FF)",
-              boxShadow: "0 4px 16px rgba(91,82,240,0.45)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <Zap size={15} color="#fff" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-transparent">
+            <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-cover" />
           </div>
           <span
             style={{
@@ -305,19 +293,8 @@ function PageFooter() {
         {/* Brand */}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 8,
-                background: "linear-gradient(135deg,#5B52F0,#7B75FF)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <Zap size={13} color="#fff" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-transparent">
+              <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-cover" />
             </div>
             <span style={{ fontSize: "1rem", fontWeight: 700, color: "#EEF2FF", letterSpacing: "-0.01em" }}>
               CloudWise AI
