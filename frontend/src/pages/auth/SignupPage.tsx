@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Zap, Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Shield, Zap as ZapIcon, TrendingUp } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ArrowLeft, Shield, Zap as ZapIcon, TrendingUp } from "lucide-react";
 import { useAuth } from "../../store/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { getApiErrorMessage } from "../../services/apiClient";

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Lock, ArrowLeft, ArrowRight, Zap, Eye, EyeOff } from "lucide-react";
+import { Lock, ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { getApiErrorMessage } from "../../services/apiClient";
 import { resetPassword } from "../../services/authService";

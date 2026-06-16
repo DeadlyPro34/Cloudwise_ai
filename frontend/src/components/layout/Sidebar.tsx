@@ -6,7 +6,7 @@ import {
   MessageSquareText,
   FileText,
   Settings,
-  Zap,
+
   X,
   Calculator,
 } from "lucide-react";

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { Mail, ArrowLeft, ArrowRight, Zap } from "lucide-react";
+import { Mail, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { getApiErrorMessage } from "../../services/apiClient";
 import { forgotPassword } from "../../services/authService";
