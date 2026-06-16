@@ -105,9 +105,9 @@ export function SignupPage() {
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "52px 52px", pointerEvents: "none" }} />
 
         {/* Logo */}
-        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div className="h-10 sm:h-12 shrink-0 flex items-center justify-center bg-transparent mb-6">
-            <img src="/logo.png" alt="CloudWise AI logo" className="h-full w-auto object-contain" />
+        <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "10px" }}>
+          <div className="w-[40px] h-[40px] rounded-lg shrink-0 flex items-center justify-center bg-transparent">
+            <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-contain" />
           </div>
           <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "#EEF2FF", fontFamily: "var(--font-sans)" }}>CloudWise AI</span>
         </div>
@@ -159,10 +159,10 @@ export function SignupPage() {
           {/* Mobile logo */}
           <div
             className="show-mobile"
-            style={{ display: "none", alignItems: "center", gap: "0.5rem", marginBottom: "2rem" }}
+            style={{ display: "none", alignItems: "center", gap: "10px", marginBottom: "2rem" }}
           >
-            <div className="h-10 sm:h-12 shrink-0 flex items-center justify-center bg-transparent mb-6">
-              <img src="/logo.png" alt="CloudWise AI logo" className="h-full w-auto object-contain" />
+            <div className="w-[40px] h-[40px] rounded-lg shrink-0 flex items-center justify-center bg-transparent">
+              <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-contain" />
             </div>
             <span style={{ fontSize: "1rem", fontWeight: 600, color: "#EEF2FF" }}>CloudWise AI</span>
           </div>

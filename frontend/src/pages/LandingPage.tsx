@@ -254,9 +254,9 @@ function Footer() {
       >
         {/* Brand */}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.1rem" }}>
-            <div className="h-9 sm:h-10 shrink-0 flex items-center justify-center bg-transparent">
-              <img src="/logo.png" alt="CloudWise AI logo" className="h-full w-auto object-contain drop-shadow-sm" />
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "0.1rem" }}>
+            <div className="w-[40px] h-[40px] rounded-lg shrink-0 flex items-center justify-center bg-transparent">
+              <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <span style={{ fontSize: "1.2rem", fontWeight: 700, color: "#EEF2FF", letterSpacing: "-0.01em" }}>CloudWise AI</span>
           </div>
@@ -392,9 +392,9 @@ export function LandingPage() {
           style={{ height: 64, padding: "0 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1200, margin: "0 auto", width: "100%" }}
         >
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexShrink: 0 }}>
-            <div className="h-8 sm:h-9 shrink-0 flex items-center justify-center bg-transparent">
-              <img src="/logo.png" alt="CloudWise AI logo" className="h-full w-auto object-contain drop-shadow-sm" />
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+            <div className="w-[40px] h-[40px] rounded-lg shrink-0 flex items-center justify-center bg-transparent">
+              <img src="/logo.png" alt="CloudWise AI logo" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <span style={{ fontSize: "1.05rem", fontWeight: 700, color: "#EEF2FF", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
               CloudWise AI
