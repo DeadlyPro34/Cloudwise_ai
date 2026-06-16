@@ -78,17 +78,19 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-        background: "rgba(5,5,8,0.85)",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        borderBottom: "1px solid rgba(255,255,255,0.07)",
-      }}
-    >
+    <div style={{ position: "sticky", top: "1.2rem", zIndex: 50, padding: "0 1.2rem" }}>
+      <header
+        style={{
+          background: "rgba(20, 20, 25, 0.35)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "100px",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+        }}
+      >
       {/* Header row */}
       <div
         className="header-inner"
@@ -179,12 +181,20 @@ function Navbar() {
       {menuOpen && (
         <nav
           style={{
-            borderTop: "1px solid rgba(255,255,255,0.07)",
-            background: "rgba(5,5,8,0.98)",
-            padding: "1rem 1.5rem 1.5rem",
+            position: "absolute",
+            top: 74,
+            left: "1rem",
+            right: "1rem",
+            width: "calc(100% - 2rem)",
+            background: "rgba(20, 20, 25, 0.95)",
+            backdropFilter: "blur(24px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "24px",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.6)",
             display: "flex",
             flexDirection: "column",
-            gap: "0.75rem",
+            padding: "1.5rem",
+            gap: "1.2rem",
           }}
         >
           {[
@@ -228,7 +238,8 @@ function Navbar() {
           </Link>
         </nav>
       )}
-    </header>
+      </header>
+    </div>
   );
 }
 
