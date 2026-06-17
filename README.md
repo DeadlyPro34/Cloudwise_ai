@@ -70,7 +70,14 @@ The easiest way to run the entire application stack locally (including the datab
 - Node.js 22+
 - Python 3.12+
 - Docker & Docker Desktop (Required for LocalStack & local PostgreSQL)
-- Groq API Key (Available for free at [console.groq.com](https://console.groq.com/))
+- Groq API Key (Required for AI Copilot)
+
+#### How to get a free Groq API Key (Takes 1 minute)
+1. Go to [console.groq.com](https://console.groq.com/) and sign in with Google or GitHub.
+2. Click on **API Keys** in the left sidebar.
+3. Click **Create API Key**.
+4. Give it a name (e.g., "CloudWise") and copy the generated key (`gsk_...`).
+5. Save this key to use in the backend `.env` file in the next steps.
 
 ### Clone the repository
 ```bash
