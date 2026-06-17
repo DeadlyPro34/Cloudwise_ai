@@ -36,3 +36,4 @@ Thumbs.db
 # --- Temporary / Scripts ---
 verify_phase2*.py
 load_test*.py
+*.tmp
