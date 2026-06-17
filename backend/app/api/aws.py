@@ -13,6 +13,8 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 import uuid
 import logging
+import urllib.request
+import urllib.error
 
 logger = logging.getLogger(__name__)
 
@@ -66,12 +68,16 @@ def _get_user_cloud_account(db: Session, user: User) -> CloudAccount | None:
 def _raise_aws_error(e: Exception) -> None:
     """Convert boto3 / botocore errors into user-friendly HTTP 400 responses."""
     msg = str(e)
+    if "Could not connect to the endpoint URL" in msg or "ConnectTimeoutError" in str(type(e)) or "EndpointConnectionError" in str(type(e)):
+        raise HTTPException(status_code=400, detail="Could not reach AWS — check your region or network connectivity.")
     if "InvalidClientTokenId" in msg or "AuthFailure" in msg or "SignatureDoesNotMatch" in msg:
         raise HTTPException(status_code=400, detail="Invalid AWS credentials. Please check your Access Key ID and Secret Access Key.")
     if "AccessDenied" in msg:
-        raise HTTPException(status_code=400, detail="Access denied. Ensure the IAM user has at least read-only permissions.")
+        raise HTTPException(status_code=400, detail="Access denied. Ensure the IAM user has at least read-only permissions (need: ce:GetCostAndUsage, ec2:Describe*, cloudwatch:GetMetricData).")
     if "ExpiredToken" in msg:
         raise HTTPException(status_code=400, detail="Your AWS credentials have expired. Please generate new credentials.")
+    if "NoCredentialsError" in msg:
+        raise HTTPException(status_code=400, detail="AWS credentials not found. Please provide valid access keys.")
     raise HTTPException(status_code=400, detail=f"AWS error: {msg}")
 
 
@@ -142,6 +148,37 @@ def _store_cost_data(
                         monthly_estimate=per_resource * 30,
                         service_cost=total_cost,
                     ))
+
+
+# ------------------------------------------------------------------
+# GET /aws/diagnostic
+# ------------------------------------------------------------------
+
+@router.get("/diagnostic")
+def diagnostic_aws():
+    """Attempt a basic network connection to AWS STS endpoint to verify outbound connectivity."""
+    try:
+        req = urllib.request.Request("https://sts.amazonaws.com", method="GET")
+        with urllib.request.urlopen(req, timeout=5) as response:
+            status = response.getcode()
+            return {
+                "can_reach_aws": True,
+                "sts_endpoint_reachable": True,
+                "error": None
+            }
+    except urllib.error.HTTPError as e:
+        # HTTPError means we connected, but got a 4xx/5xx status (e.g. 403 Forbidden). Reachable!
+        return {
+            "can_reach_aws": True,
+            "sts_endpoint_reachable": True,
+            "error": str(e)
+        }
+    except Exception as e:
+        return {
+            "can_reach_aws": False,
+            "sts_endpoint_reachable": False,
+            "error": str(e)
+        }
 
 
 # ------------------------------------------------------------------

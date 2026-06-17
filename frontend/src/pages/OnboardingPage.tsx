@@ -348,10 +348,31 @@ export function OnboardingPage() {
                   border: "1px solid rgba(239, 68, 68, 0.2)",
                 }}
               >
-                {connectError}
+                <div className="font-semibold mb-1">Connection Failed</div>
+                <div>{connectError}</div>
                 {useLocalstack && (
                   <div className="mt-2 text-xs opacity-90">
                     Make sure LocalStack is running via Docker on port 4566.
+                  </div>
+                )}
+                {!useLocalstack && connectError.includes("Access Key") && (
+                  <div className="mt-2 text-xs opacity-90 font-medium">
+                    Hint: Double-check your Access Key ID starts with "AKIA" and contains no spaces.
+                  </div>
+                )}
+                {!useLocalstack && connectError.includes("read-only permissions") && (
+                  <div className="mt-2 text-xs opacity-90 font-medium">
+                    Hint: Make sure your IAM user has the appropriate policies attached.
+                  </div>
+                )}
+                {!useLocalstack && connectError.includes("network connectivity") && (
+                  <div className="mt-2 text-xs opacity-90 font-medium">
+                    Hint: The backend server might be restricting outbound connections.
+                  </div>
+                )}
+                {!useLocalstack && connectError.includes("AWS error:") && (
+                  <div className="mt-2 text-xs opacity-90 font-medium">
+                    Hint: If using a fresh AWS account, ensure it's fully activated (check AWS console for any pending verification).
                   </div>
                 )}
               </div>
